@@ -4,8 +4,10 @@ import {
   MdFileDownload,
   MdAnalytics,
 } from "react-icons/md";
+import { useState } from "react";
 
 export default function ReportsSection() {
+    const [range, setRange] = useState("monthly");
   return (
     <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
 
@@ -23,17 +25,43 @@ export default function ReportsSection() {
           </div>
 
           {/* FILTER */}
-          <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg w-fit">
-            <button className="px-4 py-1.5 text-sm bg-white dark:bg-slate-700 rounded-md shadow">
-              Monthly
-            </button>
-            <button className="px-4 py-1.5 text-sm text-slate-500">
-              Quarterly
-            </button>
-            <button className="px-4 py-1.5 text-sm text-slate-500">
-              Yearly
-            </button>
-          </div>
+{/* FILTER */}
+<div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg w-fit">
+  
+  <button
+    onClick={() => setRange("monthly")}
+    className={`px-4 py-1.5 text-sm rounded-md transition cursor-pointer ${
+      range === "monthly"
+        ? "bg-white dark:bg-slate-700 shadow text-emerald-600"
+        : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+    }`}
+  >
+    Monthly
+  </button>
+
+  <button
+    onClick={() => setRange("quarterly")}
+    className={`px-4 py-1.5 text-sm rounded-md transition cursor-pointer ${
+      range === "quarterly"
+        ? "bg-white dark:bg-slate-700 shadow text-emerald-600"
+        : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+    }`}
+  >
+    Quarterly
+  </button>
+
+  <button
+    onClick={() => setRange("yearly")}
+    className={`px-4 py-1.5 text-sm rounded-md transition cursor-pointer ${
+      range === "yearly"
+        ? "bg-white dark:bg-slate-700 shadow text-emerald-600"
+        : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+    }`}
+  >
+    Yearly
+  </button>
+
+</div>
         </div>
 
         {/* TOP CARDS */}
@@ -125,7 +153,7 @@ export default function ReportsSection() {
                 Large Transactions
               </h3>
 
-              <button className="text-emerald-500 text-sm flex items-center gap-1">
+              <button className="text-emerald-500 text-sm flex items-center gap-1 cursor-pointer ">
                 <MdFileDownload />
                 Export CSV
               </button>
@@ -133,7 +161,7 @@ export default function ReportsSection() {
 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="text-slate-500 text-xs">
+                <thead className="text-slate-500 dark:text-slate-300 text-xs">
                   <tr className="border-b">
                     <th className="text-left py-2">Date</th>
                     <th className="text-left py-2">Description</th>
@@ -142,7 +170,7 @@ export default function ReportsSection() {
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className="dark:text-slate-400">
                   <Row date="Mar 12" desc="Rent" amount="-12500" status="Cleared" />
                   <Row date="Mar 08" desc="Groceries" amount="-4230" status="Cleared" />
                   <Row date="Mar 02" desc="Internet" amount="-1850" status="Pending" />

@@ -85,7 +85,7 @@ export default function Settings() {
               </h3>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 dark:text-slate-400">
 
               <button className="h-12 bg-slate-100 dark:bg-slate-800 rounded-lg text-left px-4 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                 Change Password

@@ -10,7 +10,7 @@ export default function AddTransaction() {
   const [type, setType] = useState("expense");
 
   return (
-    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -196,13 +196,13 @@ export default function AddTransaction() {
 
           {/* NOTES */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
-            <h3 className="font-bold mb-3 text-slate-800 dark:text-white">
+            <h3 className="font-bold mb-3 text-slate-800 dark:text-white ">
               Quick Notes
             </h3>
 
             <textarea
               placeholder="Write something..."
-              className="w-full h-32 p-3 rounded-lg bg-slate-100 dark:bg-slate-800"
+              className="w-full h-32 p-3 rounded-lg bg-slate-100 dark:bg-slate-800 dark:text-slate-400"
             />
           </div>
 

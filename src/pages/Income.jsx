@@ -1,6 +1,6 @@
 export default function AddIncome() {
   return (
-   <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+   <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
       <div className="max-w-4xl mx-auto">
 
         {/* Heading */}
@@ -75,8 +75,8 @@ export default function AddIncome() {
                 </div>
 
                 {/* NOTES */}
-                <div className="space-y-1">
-                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                <div className="space-y-1 dark:text-slate-400">
+                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 ">
                     NOTES (OPTIONAL)
                   </label>
 
@@ -84,7 +84,7 @@ export default function AddIncome() {
                     rows="4"
                     placeholder="Describe where this income came from..."
                     className="w-full p-4 rounded-lg bg-slate-100 dark:bg-slate-800
-                    border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                    border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-400"
                   />
                 </div>
 
