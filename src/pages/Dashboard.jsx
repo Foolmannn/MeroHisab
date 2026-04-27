@@ -10,20 +10,21 @@ import TransactionsTable from "../components/Layout/TransactionsTable";
 export default function Dashboard() {
   return (
     <>
-      <Sidebar/>
-      <Topbar/>
+{/* <Sidebar /> */}
 
-      <main className="ml-64 pt-24 pb-12 px-8 min-h-screen bg-background">
-        <SummaryCards/>
+{/* <Topbar /> */}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <ChartSection />
-          <CategoryChart/>
-          <TransactionsTable/>
-        </div>
-      </main>
+<main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+  <SummaryCards />
 
-      <FloatingButton/>
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 h-[calc(100%-110px)]">
+    <ChartSection />
+    <CategoryChart />
+    <TransactionsTable />
+  </div>
+</main>
+
+{/* <FloatingButton /> */}
     </>
   );
 }
