@@ -1,5 +1,6 @@
 import { MdSearch,MdLightMode, MdDarkMode, MdNotifications } from "react-icons/md";
 import { useTheme } from "../../contexts/ThemeContext";
+import { Link } from "react-router-dom";
 
 export default function Topbar() {
   const { theme, toggleTheme } = useTheme();
@@ -61,11 +62,14 @@ export default function Topbar() {
               Alex Morgan
             </p>
           </div>
-
+<Link
+to="/settings"
+>
           <img
             src="https://via.placeholder.com/40"
             className="w-10 h-10 rounded-full cursor-pointer"
-          />
+            />
+            </Link>
         </div>
 
       </div>

@@ -1,27 +1,74 @@
-export default function AddIncome() {
+import { useState, useEffect } from "react";
+export default function AddIncome({ transactions, setTransactions }) {
+
+  const [form, setForm] = useState({
+    amount: "",
+    category: "Salary",
+    date: new Date().toISOString().split("T")[0],
+    note: "",
+    person: "",
+  });
+
+  // useEffect(() => {
+  //   const saved = JSON.parse(localStorage.getItem("incomes")) || [];
+  //   setIncomes(saved);
+  // }, []);
+
+  // useEffect(() => {
+  //   localStorage.setItem("incomes", JSON.stringify(incomes));
+  // }, [incomes]);
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.amount) {
+      alert("Amount is required");
+      return;
+    }
+
+    const newTransaction = {
+      id: Date.now().toString(),
+      type: "income", //  IMPORTANT
+      amount: Number(form.amount),
+      category: form.category,
+      date: form.date,
+      note: form.note,
+      person: form.person || null,
+    };
+
+    setTransactions((prev) => [...prev, newTransaction]);
+
+    setForm({
+      amount: "",
+      category: "Salary",
+      date: new Date().toISOString().split("T")[0],
+      note: "",
+      person: "",
+    });
+  };
+
   return (
-   <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
-      <div className="max-w-4xl mx-auto">
-
+    <main className="ml-52 pt-20 px-6 pb-4 h-screen bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden dark:text-slate-400 ">
+      <div className="max-w-6xl mx-auto">
         {/* Heading */}
-        <div className="flex flex-col gap-2 mb-8">
-          <h2 className="text-3xl font-bold text-on-surface dark:text-white">
-            Add Income
-          </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Log your new earnings to keep your financial records accurate.
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4  items-start">
           {/* FORM SECTION */}
+
           <div className="lg:col-span-2 space-y-6">
-
-            <section className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-md dark:shadow-none border border-slate-100 dark:border-slate-800">
-
-              <form className="space-y-6">
-
+            <section className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-md dark:shadow-none border border-slate-100 dark:border-slate-800">
+              <h2 className="text-2xl font-bold text-on-surface dark:text-white">
+                Add Income
+              </h2>
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 {/* AMOUNT */}
                 <div className="space-y-1">
                   <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">
@@ -35,8 +82,11 @@ export default function AddIncome() {
 
                     <input
                       type="number"
+                      name="amount"
+                      value={form.amount}
+                      onChange={handleChange}
                       placeholder="0.00"
-                      className="w-full h-14 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-xl font-semibold
+                      className="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-xl font-semibold
                       border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
                     />
                   </div>
@@ -44,14 +94,18 @@ export default function AddIncome() {
 
                 {/* CATEGORY + DATE */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                   <div className="space-y-1">
                     <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">
                       CATEGORY
                     </label>
 
-                    <select className="w-full h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800
-                    border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition">
+                    <select
+                      name="category"
+                      value={form.category}
+                      onChange={handleChange}
+                      className="w-full h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800
+                    border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                    >
                       <option>Salary</option>
                       <option>Freelance</option>
                       <option>Gift</option>
@@ -68,6 +122,9 @@ export default function AddIncome() {
 
                     <input
                       type="date"
+                      name="date"
+                      value={form.date}
+                      onChange={handleChange}
                       className="w-full h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800
                       border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
                     />
@@ -81,7 +138,10 @@ export default function AddIncome() {
                   </label>
 
                   <textarea
-                    rows="4"
+                    name="note"
+                    value={form.note}
+                    onChange={handleChange}
+                    rows="3"
                     placeholder="Describe where this income came from..."
                     className="w-full p-4 rounded-lg bg-slate-100 dark:bg-slate-800
                     border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-400"
@@ -89,8 +149,7 @@ export default function AddIncome() {
                 </div>
 
                 {/* BUTTONS */}
-                <div className="flex flex-col md:flex-row gap-4 pt-2">
-
+                <div className="flex flex-col md:flex-row gap-4 pt-1">
                   <button
                     type="submit"
                     className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-full
@@ -106,14 +165,12 @@ export default function AddIncome() {
                   >
                     Cancel
                   </button>
-
                 </div>
-
               </form>
             </section>
 
             {/* INFO BOX */}
-            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 flex gap-4">
+            {/* <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 flex gap-4">
               <span className="text-emerald-600 text-2xl">ℹ️</span>
               <div>
                 <h4 className="font-semibold text-emerald-800 dark:text-emerald-300">
@@ -123,29 +180,61 @@ export default function AddIncome() {
                   Categorizing income helps improve financial insights and forecasting accuracy.
                 </p>
               </div>
-            </div>
-
+            </div> */}
           </div>
 
           {/* SIDE CARD */}
-          <div className="space-y-6">
+   
+         <div className="w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden h-3/4 ">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-800">
+  <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+    Recent Incomes
+  </h3>
+</div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-100 dark:border-slate-800">
-              <h3 className="text-xl font-bold mb-4">Quick Tips</h3>
-
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
-                Keep entries consistent for better analytics.
-              </p>
-
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                You can later export income reports for tax or budgeting.
-              </p>
+            <div className="flex flex-col gap-3">
+              {transactions
+                .filter((t) => t.type === "income")
+                .slice(-5)
+                .reverse()
+                .map((t) => (
+                  <TransactionItem
+                    key={t.id}
+                    title={t.category}
+                    amount={`+ $${t.amount}`}
+                    positive
+                    date={t.date}
+                  />
+                ))}
             </div>
-
           </div>
-
         </div>
       </div>
     </main>
+  );
+}
+function TransactionItem({ title, amount, positive, date }) {
+  return (
+    <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition border-b border-slate-100 dark:border-slate-800 last:border-none">
+
+      {/* LEFT SIDE */}
+      <div className="flex flex-col">
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+          {title}
+        </p>
+
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          {date}
+        </p>
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className={`text-sm font-semibold ${
+        positive ? "text-emerald-500" : "text-red-500"
+      }`}>
+        {amount}
+      </div>
+
+    </div>
   );
 }

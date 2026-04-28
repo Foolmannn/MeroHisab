@@ -9,7 +9,7 @@ import { useState } from "react";
 export default function ReportsSection() {
     const [range, setRange] = useState("monthly");
   return (
-    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:text-slate-400 dark:bg-slate-950 transition-colors">
 
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
 

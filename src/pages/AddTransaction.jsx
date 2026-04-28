@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {
   MdCategory,
   MdCalendarToday,
@@ -6,54 +6,80 @@ import {
   MdCheckCircle,
 } from "react-icons/md";
 
-export default function AddTransaction() {
-  const [type, setType] = useState("expense");
+export default function AddExpense({transactions, setTransactions }) {
+  const [expenses, setExpenses] = useState([]);
 
+  const [form, setForm] = useState({
+    expenseAmount: "",
+    expenseCategory: "",
+    expenseDate:new Date().toISOString().split("T")[0],
+    expenseNote:""
+  });
+//   useEffect(() => {
+//   const saved = JSON.parse(localStorage.getItem("expenses")) || [];
+//   setExpenses(saved);
+// }, []);
+
+//   useEffect(() => {
+//   localStorage.setItem("expenses", JSON.stringify(expenses));
+// }, [expenses]);
+
+const handleChange = (e) => {
+  setForm({
+    ...form,
+    [e.target.name]: e.target.value
+  });
+};
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (!form.expenseAmount || !form.expenseCategory) {
+    alert("Fill required fields");
+    return;
+  }
+
+  const newTransaction = {
+    id: Date.now().toString(),
+    type: "expense",   // 🔥 IMPORTANT
+    amount: Number(form.expenseAmount),
+    category: form.expenseCategory,
+    date: form.expenseDate,
+    note: form.expenseNote,
+    person: null
+  };
+
+  setTransactions(prev => [...prev, newTransaction]);
+
+  setForm({
+    expenseAmount: "",
+    expenseCategory: "",
+    expenseDate: "",
+    expenseNote: ""
+  });
+};
   return (
-    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
+    <main className="ml-52 pt-17 px-6 pb-6 h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* LEFT SIDE */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
+        <div className="lg:col-span-7 flex flex-col gap-6 h-2/3 *:">
 
           {/* CARD */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-3 ">
 
             {/* HEADER */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-1">
               <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-                New Transaction
+                New Expense
               </h2>
 
-              {/* Toggle Expense / Income */}
-              <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-                <button
-                  onClick={() => setType("expense")}
-                  className={`px-4 py-1.5 text-sm rounded-md transition ${
-                    type === "expense"
-                      ? "bg-white dark:bg-slate-700 text-emerald-600 shadow"
-                      : "text-slate-500"
-                  }`}
-                >
-                  Expense
-                </button>
 
-                <button
-                  onClick={() => setType("income")}
-                  className={`px-4 py-1.5 text-sm rounded-md transition ${
-                    type === "income"
-                      ? "bg-white dark:bg-slate-700 text-emerald-600 shadow"
-                      : "text-slate-500"
-                  }`}
-                >
-                  Income
-                </button>
-              </div>
             </div>
 
             {/* FORM */}
-            <form className="flex flex-col gap-5">
+            <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
 
               {/* AMOUNT */}
               <div>
@@ -61,15 +87,18 @@ export default function AddTransaction() {
                   AMOUNT
                 </label>
 
-                <div className="relative mt-1">
+                <div className="relative mt-0.5">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">
                     $
                   </span>
 
                   <input
                     type="number"
+                      name="expenseAmount"
+  value={form.expenseAmount}
+  onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full h-14 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none text-lg font-semibold text-slate-800 dark:text-white"
+                    className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none text-lg font-semibold text-slate-800 dark:text-white"
                   />
                 </div>
               </div>
@@ -83,14 +112,20 @@ export default function AddTransaction() {
                     CATEGORY
                   </label>
 
-                  <div className="relative mt-1">
+                  <div className="relative mt-0.5">
                     <MdCategory className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
 
-                    <select className="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white">
-                      <option>Select Category</option>
+                    <select 
+                     name="expenseCategory"
+  value={form.expenseCategory}
+  onChange={handleChange}
+                    className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white">
+                      <option value="">Select Category</option>
                       <option>Food</option>
                       <option>Transport</option>
                       <option>Shopping</option>
+                      <option>Health</option>
+                      <option>Other</option>
                     </select>
                   </div>
                 </div>
@@ -101,12 +136,15 @@ export default function AddTransaction() {
                     DATE
                   </label>
 
-                  <div className="relative mt-1">
-                    <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                  <div className="relative mt-0.5">
+                    <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 " />
 
                     <input
                       type="date"
-                      className="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white"
+                        name="expenseDate"
+  value={form.expenseDate}
+  onChange={handleChange}
+                      className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white "
                     />
                   </div>
                 </div>
@@ -119,9 +157,12 @@ export default function AddTransaction() {
                 </label>
 
                 <textarea
-                  rows="3"
+                  name="expenseNote"
+  value={form.expenseNote}
+  onChange={handleChange}
+                  rows="2"
                   placeholder="What was this for?"
-                  className="w-full mt-1 p-3 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white"
+                  className="w-full mt-0.5 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white"
                 />
               </div>
 
@@ -140,7 +181,7 @@ export default function AddTransaction() {
                   </div>
                 </div>
 
-                <input type="checkbox" />
+                <input type="checkbox" className="cursor-pointer" />
               </div>
 
               {/* BUTTONS */}
@@ -158,7 +199,7 @@ export default function AddTransaction() {
             </form>
           </div>
 
-          {/* QUICK CATEGORY */}
+          {/* QUICK CATEGORY
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
             <h3 className="text-sm font-semibold text-slate-500 mb-3">
               Quick Categories
@@ -174,7 +215,7 @@ export default function AddTransaction() {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
 
         </div>
 
@@ -184,18 +225,30 @@ export default function AddTransaction() {
           {/* RECENT */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
             <h3 className="font-bold mb-4 text-slate-800 dark:text-white">
-              Recent History
+              Recent Expenses
             </h3>
 
             <div className="flex flex-col gap-3">
-              <TransactionItem title="Starbucks" amount="-$4.50" />
+              {/* <TransactionItem title="Starbucks" amount="-$4.50" />
               <TransactionItem title="Uber Ride" amount="-$18.25" />
-              <TransactionItem title="Salary" amount="+$2450" positive />
+              <TransactionItem title="Salary" amount="+$2450" positive /> */}
+{transactions
+  .filter(t => t.type === "expense")
+  .slice(-5)
+  .reverse()
+  .map(t => (
+    <TransactionItem
+      key={t.id}
+      title={t.category}
+      amount={`- $${t.amount}`}
+      date={t.date}
+    />
+  ))}
             </div>
           </div>
 
           {/* NOTES */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
+          {/* <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
             <h3 className="font-bold mb-3 text-slate-800 dark:text-white ">
               Quick Notes
             </h3>
@@ -204,7 +257,10 @@ export default function AddTransaction() {
               placeholder="Write something..."
               className="w-full h-32 p-3 rounded-lg bg-slate-100 dark:bg-slate-800 dark:text-slate-400"
             />
-          </div>
+          </div> */}
+          
+
+          
 
         </div>
       </div>
@@ -212,14 +268,28 @@ export default function AddTransaction() {
   );
 }
 
-function TransactionItem({ title, amount, positive }) {
+function TransactionItem({ title, amount, positive, date }) {
   return (
-    <div className="flex justify-between items-center p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-      <p className="text-sm text-slate-700 dark:text-slate-200">{title}</p>
+    <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition border-b border-slate-100 dark:border-slate-800 last:border-none">
 
-      <p className={`font-semibold ${positive ? "text-green-500" : "text-red-500"}`}>
+      {/* LEFT SIDE */}
+      <div className="flex flex-col">
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+          {title}
+        </p>
+
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          {date}
+        </p>
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className={`text-sm font-semibold ${
+        positive ? "text-emerald-500" : "text-red-500"
+      }`}>
         {amount}
-      </p>
+      </div>
+
     </div>
   );
 }
