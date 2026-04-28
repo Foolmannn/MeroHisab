@@ -41,11 +41,14 @@
 // }
 
 
-import { useTransactions } from "../contexts/TransactionContext";
+// import { useTransactions } from "../contexts/TransactionContext";
+import SummaryCards from "../components/Layout/SummaryCards";
+import ChartSection from "../components/Layout/ChartSection";
+import CategoryChart from "../components/Layout/CategoryChart";
+import TransactionsTable from "../components/Layout/TransactionsTable";
 
 export default function Dashboard() {
   // Grab data from context
-  const { transactions } = useTransactions();
 
   // const calculateSummary = (data = []) => {
   //   const income = data

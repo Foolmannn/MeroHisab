@@ -1,29 +1,35 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const TransactionContext = createContext();
 
-export function TransactionProvider({ children }) {
-  // Use Lazy Initialization to load data immediately
-  const [transactions, setTransactions] = useState(() => {
-    const saved = localStorage.getItem("transactions");
-    return saved ? JSON.parse(saved) : [];
-  });
+export const TransactionProvider = ({ children }) => {
+  const [transactions, setTransactions] = useState([]);
 
-  // Save to localStorage whenever transactions change
+  // Load from localstorage on mount
   useEffect(() => {
-    localStorage.setItem("transactions", JSON.stringify(transactions));
-  }, [transactions]);
+    const saved = localStorage.getItem("transactions");
+    if (saved) setTransactions(JSON.parse(saved));
+  }, []);
 
-  const addTransaction = (newTx) => {
-    setTransactions((prev) => [...prev, newTx]);
+  // ADD FUNCTION
+  const addTransaction = (newTransaction) => {
+    const updated = [newTransaction, ...transactions];
+    setTransactions(updated);
+    localStorage.setItem("transactions", JSON.stringify(updated));
+  };
+
+  // DELETE FUNCTION
+  const deleteTransaction = (id) => {
+    const updated = transactions.filter((t) => t.id !== id);
+    setTransactions(updated);
+    localStorage.setItem("transactions", JSON.stringify(updated));
   };
 
   return (
-    <TransactionContext.Provider value={{ transactions, setTransactions, addTransaction }}>
+    <TransactionContext.Provider value={{ transactions, addTransaction, deleteTransaction }}>
       {children}
     </TransactionContext.Provider>
   );
-}
+};
 
-// Custom hook for easy access
 export const useTransactions = () => useContext(TransactionContext);
