@@ -3,7 +3,7 @@ import { useTransactions } from "../contexts/TransactionContext";
 
 export default function AddIncome() {
   // 1. Destructure addTransaction instead of setTransactions
-  const { transactions, addTransaction } = useTransactions();
+  const { transactions, addTransaction,currency } = useTransactions();
 
   const [form, setForm] = useState({
     amount: "",
@@ -69,8 +69,8 @@ export default function AddIncome() {
                     AMOUNT
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600 text-xl font-bold">
-                      $
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-600 text-xl font-bold">
+                    {currency}
                     </span>
                     <input
                       type="number"
@@ -175,7 +175,7 @@ export default function AddIncome() {
                   <TransactionItem
                     key={t.id}
                     title={t.category}
-                    amount={`+ $${t.amount}`}
+                    amount={`+ ${currency}${t.amount}`}
                     positive
                     date={t.date}
                   />

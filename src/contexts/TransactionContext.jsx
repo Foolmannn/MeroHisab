@@ -24,9 +24,19 @@ export const TransactionProvider = ({ children }) => {
     setTransactions(updated);
     localStorage.setItem("transactions", JSON.stringify(updated));
   };
+  // New state for currency - defaults to ₹
+  const [currency, setCurrency] = useState(() => {
+    return localStorage.getItem("app_currency") || "₹";
+  });
+
+  const updateCurrency = (symbol) => {
+    setCurrency(symbol);
+    localStorage.setItem("app_currency", symbol);
+  };
 
   return (
-    <TransactionContext.Provider value={{ transactions, addTransaction, deleteTransaction }}>
+    <TransactionContext.Provider value={{ transactions, addTransaction,currency, 
+      updateCurrency, deleteTransaction }}>
       {children}
     </TransactionContext.Provider>
   );

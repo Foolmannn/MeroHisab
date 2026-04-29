@@ -16,7 +16,7 @@ const getIcon = (category) => {
 };
 
 export default function TransactionsTable() {
-  const { transactions, deleteTransaction } = useTransactions();
+  const { transactions, deleteTransaction,currency } = useTransactions();
 
   const handleDelete = (id, note) => {
     // Simple but effective warning popup
@@ -47,7 +47,7 @@ export default function TransactionsTable() {
                     title={t.note || t.category}
                     subtitle={t.category}
                     date={t.date}
-                    amount={`${isIncome ? "+" : "-"}$${Number(t.amount).toLocaleString()}`}
+                    amount={`${isIncome ? "+" : "-"}${currency}${Number(t.amount).toLocaleString()}`}
                     color={isIncome ? "text-green-600" : "text-red-500"}
                     onDelete={() => handleDelete(t.id, t.note)} // Pass delete handler
                   />

@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
-export default function CategoryPieChart({ data }) {
+export default function CategoryPieChart({ data ,currency}) {
   const processData = () => {
     const categories = {};
     let total = 0;
@@ -63,7 +63,7 @@ export default function CategoryPieChart({ data }) {
                }}
                itemStyle={{ color: '#fff', fontSize: '12px' }}
                // Format the value in the tooltip to look like money
-               formatter={(value) => [`$${value.toLocaleString()}`, 'Spent']}
+               formatter={(value) => [`${currency}${value.toLocaleString()}`, 'Spent']}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -72,7 +72,7 @@ export default function CategoryPieChart({ data }) {
       {/* CENTER TOTAL */}
       <div className="absolute top-[110px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
         <p className="text-2xl font-bold text-slate-900 dark:text-white">
-          ${total.toLocaleString()}
+          {currency}{total.toLocaleString()}
         </p>
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
           Total Spent

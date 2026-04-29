@@ -61,7 +61,7 @@ import { MdTrendingUp, MdTrendingDown, MdRequestQuote, MdVolunteerActivism, MdAc
 
 export default function SummaryCards() {
   // 1. Grab transactions directly from Context
-  const { transactions } = useTransactions();
+  const { transactions,currency } = useTransactions();
 
   // 2. Perform calculations locally within the component
   const calculateData = () => {
@@ -98,30 +98,30 @@ export default function SummaryCards() {
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
       <Card 
         title="Total Balance" 
-        value={`$${stats.balance.toLocaleString()}`} 
+        value={`${currency}${stats.balance.toLocaleString()}`} 
         icon={MdAccountBalanceWallet}
         variant="balance" 
       />
       <Card 
         title="Income" 
-        value={`$${stats.income.toLocaleString()}`} 
+        value={`${currency}${stats.income.toLocaleString()}`} 
         icon={MdTrendingUp} 
         variant="income"
       />
       <Card 
         title="Expenses" 
-        value={`$${stats.expense.toLocaleString()}`} 
+        value={`${currency}${stats.expense.toLocaleString()}`} 
         icon={MdTrendingDown} 
         variant="expense"
       />
       <Card 
         title="Borrowed" 
-        value={`$${stats.borrowed.toLocaleString()}`} 
+        value={`${currency}${stats.borrowed.toLocaleString()}`} 
         icon={MdRequestQuote} 
       />
       <Card 
         title="Lent" 
-        value={`$${stats.lent.toLocaleString()}`} 
+        value={`${currency}${stats.lent.toLocaleString()}`} 
         icon={MdVolunteerActivism} 
       />
     </div>

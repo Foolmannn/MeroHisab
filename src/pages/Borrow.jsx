@@ -9,7 +9,7 @@ import {
 } from "react-icons/md";
 
 export default function BorrowSection() {
-  const { transactions, addTransaction } = useTransactions();
+  const { transactions, addTransaction ,currency } = useTransactions();
 
   const [form, setForm] = useState({
     borrowedFrom: "",
@@ -70,7 +70,7 @@ export default function BorrowSection() {
               <div>
                 <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">AMOUNT</label>
                 <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">{currency}</span>
                   <input
                     type="number"
                     name="amount"
@@ -173,7 +173,7 @@ export default function BorrowSection() {
                   <TransactionItem
                     key={t.id}
                     title={t.person}
-                    amount={`₹${t.amount}`}
+                    amount={`${currency}${t.amount}`}
                     date={t.date}
                     dueDate={t.dueDate}
                   />

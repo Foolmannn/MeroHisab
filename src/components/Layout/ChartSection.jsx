@@ -23,7 +23,7 @@ import { MdShowChart, MdExpandMore } from "react-icons/md";
 import MainChart from "../Charts/MainChart"; 
 
 export default function ChartSection() {
-  const { transactions } = useTransactions();
+  const { transactions, currency } = useTransactions();
   const [days, setDays] = useState(7); // Default to 7 days
 
   return (
