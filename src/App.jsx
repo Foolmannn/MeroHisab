@@ -12,7 +12,7 @@ import BorrowSection from './pages/Borrow';
 import LendSection from './pages/Lend';
 import ReportSection from './pages/Reports';
 import SettingsSection from './pages/Settings';
-import AddExpense from './pages/AddTransaction';
+import AddExpense from './pages/AddExpense';
 import { TransactionProvider } from './contexts/TransactionContext';
 import { UserProvider } from './contexts/UserContext';
 
