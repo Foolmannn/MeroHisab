@@ -14,6 +14,7 @@ import ReportSection from './pages/Reports';
 import SettingsSection from './pages/Settings';
 import AddExpense from './pages/AddTransaction';
 import { TransactionProvider } from './contexts/TransactionContext';
+import { UserProvider } from './contexts/UserContext';
 
 
 // import './App.css'
@@ -62,6 +63,9 @@ import { TransactionProvider } from './contexts/TransactionContext';
 
 function App() {
   return (
+    <UserProvider>
+
+
     <TransactionProvider>
       <ThemeProvider>
         <div className='dark:bg-slate-950 bg-slate-50'>
@@ -81,6 +85,7 @@ function App() {
         </div>
       </ThemeProvider>
     </TransactionProvider>
+    </UserProvider>
   );
 }
 

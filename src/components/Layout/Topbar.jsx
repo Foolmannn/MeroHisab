@@ -1,9 +1,11 @@
 import { MdSearch,MdLightMode, MdDarkMode, MdNotifications } from "react-icons/md";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Link } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 
 export default function Topbar() {
   const { theme, toggleTheme } = useTheme();
+  const {user} = useUser()
 
   return (
     <header className="fixed top-0 right-0 w-[calc(100%-12rem)] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-8 py-2">
@@ -59,16 +61,18 @@ export default function Topbar() {
         <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
           <div className="text-right">
             <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-              Alex Morgan
+          {user?.firstName || "New User"}
             </p>
           </div>
 <Link
 to="/settings"
 >
-          <img
-            src="https://via.placeholder.com/40"
-            className="w-10 h-10 rounded-full cursor-pointer"
-            />
+    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-slate-800 flex items-center justify-center border-2 border-emerald-500/20 hover:border-emerald-500 transition-all overflow-hidden">
+               {/* Use placeholder if no image, or user's initials */}
+               <span className="text-emerald-600 font-bold">
+                 {user?.firstName ? user.firstName[0].toUpperCase() : "?"}
+               </span>
+            </div>
             </Link>
         </div>
 
