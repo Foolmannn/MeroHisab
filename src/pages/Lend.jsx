@@ -3,7 +3,7 @@ import { useTransactions } from "../contexts/TransactionContext";
 import { MdPerson, MdCalendarToday, MdAttachMoney, MdNotes, MdCheckCircle } from "react-icons/md";
 
 export default function LendSection() {
-  const { transactions, addTransaction } = useTransactions();
+  const { transactions,currency, addTransaction } = useTransactions();
 
   const [form, setForm] = useState({
     name: "",
@@ -64,7 +64,7 @@ export default function LendSection() {
               <div>
                 <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Amount</label>
                 <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">{currency}</span>
                   <input
                     type="number"
                     name="amount"

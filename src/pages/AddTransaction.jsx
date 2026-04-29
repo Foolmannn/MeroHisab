@@ -9,7 +9,7 @@ import {
 
 export default function AddExpense() {
   // 1. Grab addTransaction instead of setTransactions
-  const { transactions, addTransaction } = useTransactions();
+  const { transactions,currency, addTransaction } = useTransactions();
 
   const [form, setForm] = useState({
     expenseAmount: "",
@@ -73,7 +73,7 @@ export default function AddExpense() {
               <div>
                 <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">AMOUNT</label>
                 <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">{currency}</span>
                   <input
                     type="number"
                     name="expenseAmount"

@@ -8,7 +8,8 @@ import {
   MdDeleteForever,
   MdDownload,
   MdLock,
-  MdEmail
+  MdEmail,
+  MdExpandMore
 } from "react-icons/md";
 
 export default function Settings() {
@@ -177,7 +178,7 @@ export default function Settings() {
                   {!isChangingPassword && (
                     <button 
                       onClick={() => setIsChangingPassword(true)}
-                      className="text-xs font-bold text-emerald-500 hover:text-emerald-600 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-full transition"
+                      className="text-xs font-bold  text-emerald-500 hover:text-emerald-600 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-full transition"
                     >
                       Change Password
                     </button>
@@ -185,20 +186,20 @@ export default function Settings() {
                 </div>
 
                 {isChangingPassword && (
-                  <div className="space-y-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                  <div className="space-y-3 text-slate-800 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                     <input 
                       type="password" 
                       placeholder="Current Password"
                       value={securityInput.current}
                       onChange={(e) => setSecurityInput({...securityInput, current: e.target.value})}
-                      className="w-full h-10 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm text-white outline-none"
+                      className="w-full h-10 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm dark:text-white outline-none"
                     />
                     <input 
                       type="password" 
                       placeholder="New Password"
                       value={securityInput.next}
                       onChange={(e) => setSecurityInput({...securityInput, next: e.target.value})}
-                      className="w-full h-10 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm text-white outline-none"
+                      className="w-full h-10 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm dark:text-white outline-none"
                     />
                     <div className="flex gap-2">
                       <button onClick={handlePasswordUpdate} className="flex-1 h-10 bg-emerald-500 text-white rounded-lg text-xs font-bold hover:bg-emerald-600 transition">Update Password</button>
@@ -213,20 +214,25 @@ export default function Settings() {
 
         {/* RIGHT SIDE */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
-            <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-              <MdCurrencyExchange className="text-emerald-500" /> Preferences
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Currency</label>
-                <select 
-                  value={currency}
-                  onChange={(e) => updateCurrency(e.target.value)}
-                  className="w-full mt-1 h-11 px-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none outline-none appearance-none cursor-pointer"
-                >
-                  <option value="Rs.">NPR - Nepalese Rupee (Rs.)</option>
+{/* Currency selections */}
+<div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
+  <h3 className="font-bold text-xl text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+     Preferences
+  </h3>
+  
+  <div className="space-y-4">
+    <div>
+      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Currency</label>
+      
+      {/* Relative container for the custom dropdown icon */}
+      <div className="relative mt-1">
+        <select 
+          value={currency}
+          onChange={(e) => updateCurrency(e.target.value)}
+          className="w-full h-11 pl-4 pr-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none outline-none appearance-none cursor-pointer focus:ring-2 ring-emerald-500/20"
+        >
                   <option value="रू">NPR - Nepalese Rupee (रू)</option>
+                <option value="Rs.">NPR - Nepalese Rupee (Rs.)</option>
                   <option value="₹">INR - Indian Rupee (₹)</option>
                   <option value="$">USD - US Dollar ($)</option>
                   <option value="€">EUR - Euro (€)</option>
@@ -234,11 +240,16 @@ export default function Settings() {
                   <option value="₨">PKR - Pakistani Rupee (₨)</option>
                   <option value="£">GBP - British Pound (£)</option>
                   <option value="¥">JPY - Japanese Yen (¥)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
+        </select>
+        
+        {/* The Dropdown Arrow Icon */}
+        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+          <MdExpandMore className="text-slate-500 dark:text-slate-400 text-xl" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
           {/* DANGER ZONE */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-red-100 dark:border-red-900/30 overflow-hidden">
             <h3 className="font-bold text-red-500 mb-2 flex items-center gap-2">
