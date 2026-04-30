@@ -83,7 +83,7 @@ export default function Settings() {
     if (window.confirm("CRITICAL: This wipes all transactions and profile data. Proceed?")) {
       // Clear localStorage specifically to avoid clashing with other apps
       localStorage.removeItem("vault_finance_user_data");
-      localStorage.removeItem("vault_finance_transactions");
+      localStorage.removeItem("transactions");
       localStorage.removeItem("app_currency");
       localStorage.removeItem("theme");
 
