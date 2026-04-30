@@ -2,21 +2,107 @@ import { MdSearch,MdLightMode, MdDarkMode, MdNotifications } from "react-icons/m
 import { useTheme } from "../../contexts/ThemeContext";
 import { Link } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
+import { useState, useEffect } from "react";
+import {  MdKeyboardCommandKey, MdMic } from "react-icons/md";
+import { useTransactions } from "../../contexts/TransactionContext";
 
 export default function Topbar() {
   const { theme, toggleTheme } = useTheme();
   const {user} = useUser()
+const { addTransaction, currency } = useTransactions();
+  const [command, setCommand] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  return (
+  const handleQuickCommand = (input) => {
+    // Expected formats: 
+    // e-500-Food-Pizza Party
+    // l-1000-Hari-College Fee
+    const parts = input.split("-");
+    if (parts.length < 3) return; // Need at least type, amount, and (category or person)
+
+    const typeCode = parts[0].toLowerCase().trim();
+    const amount = Number(parts[1].trim());
+    const detail = parts[2].trim(); // Category for e/i, Person for l/b
+    const note = parts[3] ? parts[3].trim() : "";
+
+    if (isNaN(amount)) return;
+
+    // 1. Map Type Code
+    const typeMap = {
+      e: "expense",
+      i: "income",
+      l: "lend",
+      b: "borrow",
+    };
+    const type = typeMap[typeCode];
+    if (!type) return;
+
+    // 2. Date Logic
+    const today = new Date();
+    const formattedToday = today.toISOString().split("T")[0];
+
+    // Due date (1 week from now) for lend/borrow
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7);
+    const formattedNextWeek = nextWeek.toISOString().split("T")[0];
+
+    // 3. Create Transaction Object
+    const newEntry = {
+      id: Date.now().toString(),
+      type: type,
+      amount: amount,
+      date: formattedToday,
+      note: note || detail, // Use detail as note if note is empty
+      status: "Pending",
+    };
+
+    // Add specific fields based on type
+    if (type === "lend" || type === "borrow") {
+      newEntry.person = detail;
+      newEntry.dueDate = formattedNextWeek;
+    } else {
+      newEntry.category = detail;
+    }
+
+    addTransaction(newEntry);
+
+    // Visual Feedback
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setCommand("");
+    }, 800);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleQuickCommand(command);
+    }
+  };
+
+return (
     <header className="fixed top-0 right-0 w-[calc(100%-12rem)] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-8 py-2">
-
-      {/* Search */}
-      <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full w-96">
-        <MdSearch className="text-slate-400 w-5 h-5" />
+      
+      {/* QUICK COMMAND BAR */}
+      <div className={`relative flex items-center gap-3 px-4 py-2 rounded-full w-2/3 transition-all border-2 ${
+        isProcessing ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "bg-slate-100 dark:bg-slate-800 border-transparent"
+      }`}>
+        <MdKeyboardCommandKey className={isProcessing ? "text-emerald-500" : "text-slate-400"} />
         <input
-          className="bg-transparent outline-none text-sm w-full text-slate-800 dark:text-slate-100"
-          placeholder="Search transactions..."
+          type="text"
+          value={command}
+          onChange={(e) => setCommand(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="e-500-Food-Pizza  OR  l-1000-Hari-Fee"
+          className="bg-transparent outline-none text-sm w-full text-slate-800 dark:text-slate-100 font-mono"
         />
+        
+        {/* Helper Badge */}
+        {!command && (
+          <span className="absolute right-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+            Type-Amt-Name-Note
+          </span>
+        )}
       </div>
 
       {/* Right side */}
