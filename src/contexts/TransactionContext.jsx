@@ -18,13 +18,23 @@ export const TransactionProvider = ({ children }) => {
     localStorage.setItem("transactions", JSON.stringify(updated));
   };
 
+  // UPDATE FUNCTION (New)
+  const updateTransaction = (id, updatedFields) => {
+    const updated = transactions.map((t) =>
+      t.id === id ? { ...t, ...updatedFields } : t
+    );
+    setTransactions(updated);
+    localStorage.setItem("transactions", JSON.stringify(updated));
+  };
+
   // DELETE FUNCTION
   const deleteTransaction = (id) => {
     const updated = transactions.filter((t) => t.id !== id);
     setTransactions(updated);
     localStorage.setItem("transactions", JSON.stringify(updated));
   };
-  // New state for currency - defaults to ₹
+
+  // Currency state
   const [currency, setCurrency] = useState(() => {
     return localStorage.getItem("app_currency") || "₹";
   });
@@ -35,8 +45,17 @@ export const TransactionProvider = ({ children }) => {
   };
 
   return (
-    <TransactionContext.Provider value={{ transactions, addTransaction,currency, setTransactions ,
-      updateCurrency, deleteTransaction }}>
+    <TransactionContext.Provider
+      value={{
+        transactions,
+        addTransaction,
+        updateTransaction, // Exporting the new function
+        currency,
+        setTransactions,
+        updateCurrency,
+        deleteTransaction,
+      }}
+    >
       {children}
     </TransactionContext.Provider>
   );

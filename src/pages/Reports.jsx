@@ -103,10 +103,10 @@ export default function ReportsSection() {
                 Cash Flow
               </h3>
 
-              <button className="flex items-center gap-2 text-emerald-500 text-sm">
+              {/* <button className="flex items-center gap-2 text-emerald-500 text-sm">
                 <MdFileDownload />
                 Export
-              </button>
+              </button> */}
             </div>
 
             {/* MOCK CHART */}

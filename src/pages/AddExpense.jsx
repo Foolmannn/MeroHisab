@@ -47,12 +47,12 @@ export default function AddExpense() {
     // This handles both state update AND LocalStorage saving
     addTransaction(newTransaction);
 
-    setForm({
-      expenseAmount: "",
-      expenseCategory: "",
-      expenseDate: new Date().toISOString().split("T")[0], 
-      expenseNote: ""
-    });
+    // setForm({
+    //   expenseAmount: "",
+    //   expenseCategory: "",
+    //   expenseDate: new Date().toISOString().split("T")[0], 
+    //   expenseNote: ""
+    // });
   };
 
   return (

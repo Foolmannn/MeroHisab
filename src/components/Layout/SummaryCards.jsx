@@ -1,86 +1,37 @@
-// import { MdTrendingUp, MdTrendingDown, MdRequestQuote, MdVolunteerActivism } from "react-icons/md";
-import {useTransactions} from "../../contexts/TransactionContext"
-import { MdTrendingUp, MdTrendingDown, MdRequestQuote, MdVolunteerActivism, MdAccountBalanceWallet } from "react-icons/md";
-
-// export default function SummaryCards() {
-//   const { transactions } = useTransactions();
-
-//   const calculateSummary = (data = []) => {
-//     const income = data
-//       .filter(t => t.type === "income" || t.type === "borrow")
-//       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-
-//     const expense = data
-//       .filter(t => t.type === "expense" || t.type === "lend")
-//       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-
-//     return {
-//       income,
-//       expense,
-//       borrowed: data.filter(t => t.type === "borrow").reduce((sum, t) => sum + Number(t.amount || 0), 0),
-//       lent: data.filter(t => t.type === "lend").reduce((sum, t) => sum + Number(t.amount || 0), 0),
-//       balance: income - expense
-//     };
-//   };
-//   console.log("Dash:",transactions)
-
-//   const summary = calculateSummary(transactions);
-
-
-
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-5 gap-5 mb-3">
-
-//       <Card title="Total Balance" value={`$${summary?.balance || 0}`} />
-
-//       <Card title="Income" value={`$${summary?.income || 0}`} icon={MdTrendingUp} />
-
-//       <Card title="Expenses" value={`$${summary?.expense || 0}`} icon={MdTrendingDown} />
-
-//       <Card title="Borrowed" value={`$${summary?.borrowed || 0}`} icon={MdRequestQuote} />
-
-//       <Card title="Lent" value={`$${summary?.lent || 0}`} icon={MdVolunteerActivism} />
-
-//     </div>
-//   );
-// }
-
-// function Card({ title, value, icon: Icon }) {
-//   return (
-//     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl shadow-sm flex flex-col gap-2">
-//       <div className="flex items-center justify-between">
-//       <p className="text-sm text-slate-600 dark:text-slate-300">{title}</p>
-//         {Icon && <Icon className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />}
-//       </div>
-
-//       <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{value}</h2>
-//     </div>
-//   );
-// }
-
+import React from "react";
+import { useTransactions } from "../../contexts/TransactionContext";
+import { 
+  MdTrendingUp, 
+  MdTrendingDown, 
+  MdRequestQuote, 
+  MdVolunteerActivism, 
+  MdAccountBalanceWallet 
+} from "react-icons/md";
 
 export default function SummaryCards() {
-  // 1. Grab transactions directly from Context
-  const { transactions,currency } = useTransactions();
+  const { transactions, currency } = useTransactions();
 
-  // 2. Perform calculations locally within the component
   const calculateData = () => {
     const data = transactions || [];
-    
+
+    // 1. Income: Regular income + Lent money that has been Settled
     const income = data
-      .filter(t => t.type === "income" || t.type === "borrow")
+      .filter(t => t.type === "income" || (t.type === "lend" && t.status === "Settled"))
       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
+    // 2. Expense: Regular expenses + Borrowed money that has been Paid
     const expense = data
-      .filter(t => t.type === "expense" || t.type === "lend")
+      .filter(t => t.type === "expense" || (t.type === "borrow" && t.status === "Paid"))
       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
+    // 3. Borrowed (Pending): Only money you still owe
     const borrowed = data
-      .filter(t => t.type === "borrow")
+      .filter(t => t.type === "borrow" && t.status === "Pending")
       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
+    // 4. Lent (Pending): Only money people still owe you
     const lent = data
-      .filter(t => t.type === "lend")
+      .filter(t => t.type === "lend" && t.status === "Pending")
       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
     return {
@@ -103,37 +54,40 @@ export default function SummaryCards() {
         variant="balance" 
       />
       <Card 
-        title="Income" 
+        title="Real Income" 
         value={`${currency}${stats.income.toLocaleString()}`} 
         icon={MdTrendingUp} 
         variant="income"
       />
       <Card 
-        title="Expenses" 
+        title="Real Expenses" 
         value={`${currency}${stats.expense.toLocaleString()}`} 
         icon={MdTrendingDown} 
         variant="expense"
       />
       <Card 
-        title="Borrowed" 
+        title="To Pay (Debt)" 
         value={`${currency}${stats.borrowed.toLocaleString()}`} 
         icon={MdRequestQuote} 
+        variant="borrow"
       />
       <Card 
-        title="Lent" 
+        title="To Get (Lent)" 
         value={`${currency}${stats.lent.toLocaleString()}`} 
         icon={MdVolunteerActivism} 
+        variant="lend"
       />
     </div>
   );
 }
 
 function Card({ title, value, icon: Icon, variant }) {
-  // Optional: Dynamic colors based on variant
   const iconColors = {
     income: "text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20",
     expense: "text-red-500 bg-red-50 dark:bg-red-900/20",
     balance: "text-blue-500 bg-blue-50 dark:bg-blue-900/20",
+    borrow: "text-orange-500 bg-orange-50 dark:bg-orange-900/20",
+    lend: "text-purple-500 bg-purple-50 dark:bg-purple-900/20",
     default: "text-slate-500 bg-slate-50 dark:bg-slate-800"
   };
 
