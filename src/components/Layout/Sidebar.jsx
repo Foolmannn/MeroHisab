@@ -10,6 +10,8 @@ import {
 import { Link } from "react-router-dom";
 
 import logoImg from "../../assets/logo.png";
+import logo1Img from "../../assets/logo1.png";
+import logo2Img from "../../assets/logo2.png";
 
 export default function Sidebar() {
   const menuItems = [
@@ -26,15 +28,41 @@ export default function Sidebar() {
     <aside className="fixed left-0 top-0 h-screen w-52 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-md flex flex-col p-3 gap-2 z-50">
 
       {/* Logo */}
-      <div className="flex items-center gap-2 px-2 py-0 mb-2 ">
+      {/* <div className="flex items-center gap-2 px-2 py-0 mb-2 ">
         <div>
           <img src={logoImg} alt="logo" className="w-25 h-auto" />
           <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Track Manage Grow
           </p>
         </div>
-      </div>
-
+      </div> */}
+{/* Logo */}
+<div className="flex flex-col items-start gap-1 px-4 py-4 mb-4">
+  <div className="relative group">
+    {/* 
+        1. Added 'dark:invert' if your logo is black-only (turns it white in dark mode).
+        2. Added 'dark:drop-shadow' to give it a glow on dark backgrounds.
+        3. Added 'brightness' control for better clarity.
+    */}
+    <img 
+      src={logo2Img} 
+      alt="Mero Hisab Logo" 
+      className="w-32 h-auto object-contain transition-all duration-300
+                 filter brightness-100 contrast-110
+                 dark:brightness-125 dark:contrast-125 
+                 dark:drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]" 
+    />
+  </div>
+  
+  {/* Subtext with better spacing and contrast */}
+  <div className="">
+    <p className="text-[10px] font-bold uppercase tracking-[0.2em] 
+                  text-slate-500 dark:text-emerald-500/80 
+                  transition-colors duration-300">
+      Track.Manage.Grow
+    </p>
+  </div>
+</div>
       {/* Menu */}
       <nav className="flex flex-col gap-1 text-sm">
         {menuItems.map((item) => {

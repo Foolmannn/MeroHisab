@@ -82,7 +82,7 @@ useEffect(() => {
             return [{
               id: Date.now() + t.id,
               txnId: t.id, // Store the txnId so we can track it
-              text: `Reminder: ${t.person}'s ${t.type} is due today!`,
+              text: `Reminder: ${t.person}'s ${t.type} of ${currency} ${t.amount} is due today!`,
               type: "warning",
               time: "Just now",
               read: false
