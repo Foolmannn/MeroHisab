@@ -1,11 +1,14 @@
 import React from "react";
 import { useTransactions } from "../../contexts/TransactionContext";
+import { Link } from "react-router-dom"; // Add this import
+
 import { 
   MdTrendingUp, 
   MdTrendingDown, 
   MdRequestQuote, 
   MdVolunteerActivism, 
-  MdAccountBalanceWallet 
+  MdAccountBalanceWallet ,
+  MdAdd, MdArrowForward
 } from "react-icons/md";
 
 export default function SummaryCards() {
@@ -95,6 +98,7 @@ return (
   );
 }
 
+
 function Card({ title, value, icon: Icon, variant }) {
   const iconColors = {
     income: "text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20",
@@ -106,16 +110,44 @@ function Card({ title, value, icon: Icon, variant }) {
   };
 
   const activeColor = iconColors[variant] || iconColors.default;
+  const isBalance = variant === "balance";
 
-const isBalance = variant === "balance";
+  // FIXED: Explicit mapping for each variant
+  const getLinkPath = () => {
+    const paths = {
+      balance: "/reports",
+      income: "/add-income",
+      expense: "/add-expense",
+      borrow: "/add-borrow",
+      lend: "/add-lend"
+    };
+    return paths[variant] || "/dashboard";
+  };
 
   return (
     <div className={`
-      border rounded-xl p-4 shadow-sm flex flex-col gap-1 transition-all
+      relative group border rounded-xl p-4 shadow-sm flex flex-col gap-1 transition-all
       ${isBalance 
         ? "bg-blue-600 dark:bg-blue-600 border-blue-500 text-white" 
         : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800"}
     `}>
+      
+      {/* QUICK ACCESS LINK */}
+      <Link 
+        to={getLinkPath()}
+        className={`
+          absolute bottom-3 right-3 p-1.5 rounded-full transition-all 
+          z-10 cursor-pointer
+          /* Visible on mobile, hover effect on desktop */
+          opacity-100 lg:opacity-0 lg:group-hover:opacity-100
+          ${isBalance 
+            ? "bg-white/20 hover:bg-white/40 text-white" 
+            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-500 hover:text-white"}
+        `}
+      >
+        {isBalance ?<MdArrowForward size={16} /> : <MdAdd size={18} />}
+      </Link>
+
       <div className="flex items-center justify-between">
         <p className={`text-[10px] font-bold uppercase tracking-wider ${isBalance ? "text-blue-100" : "text-slate-500"}`}>
           {title}
@@ -124,7 +156,8 @@ const isBalance = variant === "balance";
           {Icon && <Icon size={isBalance ? 22 : 18} />}
         </div>
       </div>
-      <h2 className={`font-bold truncate ${isBalance ? "text-2xl md:text-3xl text-white" : "text-lg md:text-2xl text-slate-900 dark:text-slate-100"}`}>
+      
+      <h2 className={`font-bold truncate pr-8 ${isBalance ? "text-2xl md:text-3xl text-white" : "text-lg md:text-2xl text-slate-900 dark:text-slate-100"}`}>
         {value}
       </h2>
     </div>

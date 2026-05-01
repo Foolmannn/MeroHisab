@@ -86,7 +86,9 @@ export default function Topbar() {
   }, []);
 
   return (
-<header className="fixed top-0 right-0 w-full lg:w-[calc(100%-13rem)] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-4 lg:px-8 py-2">
+<header className="fixed top-0 right-0 w-full lg:w-[calc(100%-13rem)] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center 
+  /* ADDED: pl-14 on mobile to make room for hamburger, normal padding on desktop */
+  pl-14 pr-4 lg:px-8 py-2">
       
       {/* QUICK COMMAND BAR */}
 <div className={`relative flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 rounded-full flex-1 lg:flex-none lg:w-2/3 transition-all border-2 ${
@@ -95,13 +97,13 @@ export default function Topbar() {
   <MdKeyboardCommandKey className={isProcessing ? "text-emerald-500" : "text-slate-400 shrink-0"} />
   <input
     // ... same values ...
-    placeholder="e-500-Food" // Shortened for mobile
+    placeholder="e-500-Food-Note" // Shortened for mobile
     className="bg-transparent outline-none text-xs lg:text-sm w-full text-slate-800 dark:text-slate-100 font-mono"
   />
   {/* Hide the helper text on small screens */}
   {!command && (
     <span className="hidden md:block absolute right-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest pointer-events-none">
-      Type-Amount-Name
+      Type-Amount-Name-Note
     </span>
   )}
 </div>
@@ -181,20 +183,33 @@ export default function Topbar() {
         </div>
 
         {/* PROFILE */}
-        <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
-          <div className="text-right">
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-              {user?.firstName || "New User"}
-            </p>
-          </div>
-          <Link to="/settings">
-            <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-slate-800 flex items-center justify-center border-2 border-emerald-500/20 hover:border-emerald-500 transition-all overflow-hidden">
-              <span className="text-emerald-600 font-bold">
-                {user?.firstName ? user.firstName[0].toUpperCase() : "?"}
-              </span>
-            </div>
-          </Link>
-        </div>
+<div className="flex items-center gap-2 lg:gap-6 ml-2">
+  {/* THEME TOGGLE: Hide on very small screens, or keep it compact */}
+  <div className="hidden sm:flex items-center bg-slate-200 dark:bg-slate-800 p-1 rounded-full border border-slate-300 dark:border-slate-700">
+    {/* ... your toggle buttons ... */}
+  </div>
+
+  {/* NOTIFICATIONS: Keep as is, but maybe reduce padding */}
+  <div className="relative" ref={notificationRef}>
+     {/* ... your notification button ... */}
+  </div>
+
+  {/* PROFILE: Hide name on mobile */}
+  <div className="flex items-center gap-3 pl-2 lg:pl-4 border-l border-slate-200 dark:border-slate-700">
+    <div className="hidden md:block text-right">
+      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[100px]">
+        {user?.firstName || "User"}
+      </p>
+    </div>
+    <Link to="/settings">
+      <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-emerald-100 dark:bg-slate-800 flex items-center justify-center border-2 border-emerald-500/20 hover:border-emerald-500 transition-all overflow-hidden">
+        <span className="text-emerald-600 text-xs lg:text-base font-bold">
+          {user?.firstName ? user.firstName[0].toUpperCase() : "?"}
+        </span>
+      </div>
+    </Link>
+  </div>
+  </div>
       </div>
     </header>
   );

@@ -20,8 +20,8 @@ export default function Sidebar() {
     { name: "Dashboard", icon: MdDashboard, url: "/" },
     { name: "Add Expense", icon: MdAddCircle, url: "/add-expense" },
     { name: "Add Income", icon: MdPayments, url: "/add-income" },
-    { name: "Borrow", icon: MdRequestQuote, url: "/borrow" },
-    { name: "Lend", icon: MdVolunteerActivism, url: "/lend" },
+    { name: "Borrow", icon: MdRequestQuote, url: "/add-borrow" },
+    { name: "Lend", icon: MdVolunteerActivism, url: "/add-lend" },
     { name: "Reports", icon: MdBarChart, url: "/reports" },
     { name: "Settings", icon: MdSettings, url: "/settings" },
   ];

@@ -77,8 +77,8 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/add-expense" element={<AddExpense />} />
             <Route path="/add-income" element={<AddIncome />} />
-            <Route path="/borrow" element={<BorrowSection />} />
-            <Route path="/lend" element={<LendSection />} />
+            <Route path="/add-borrow" element={<BorrowSection />} />
+            <Route path="/add-lend" element={<LendSection />} />
             <Route path="/settings" element={<SettingsSection />} />
             <Route path="/reports" element={<ReportSection />} />
           </Routes>
