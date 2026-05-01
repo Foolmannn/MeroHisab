@@ -105,7 +105,7 @@ export default function Settings() {
   };
 
   return (
-    <main className="lg:ml-52 pt-20 lg:pt-17 px-4 md:px-6 pb-6 h-screen overflow-y-auto lg:overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
+    <main className="lg:ml-52 pt-20 lg:pt-23 px-4 md:px-6 pb-6 h-screen overflow-y-auto lg:overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* LEFT SIDE: PROFILE & SECURITY */}
         <div className="lg:col-span-7 flex flex-col gap-6">
@@ -179,7 +179,7 @@ export default function Settings() {
 
               <button
                 type="submit"
-                className={`h-11 rounded-full font-bold text-white transition active:scale-95 shadow-lg ${
+                className={`h-11 rounded-full font-bold text-white transition active:scale-95 shadow-lg cursor-pointer ${
                   user
                     ? "bg-emerald-500 shadow-emerald-500/20"
                     : "bg-blue-600 shadow-blue-500/20"
@@ -202,7 +202,7 @@ export default function Settings() {
                   {!isChangingPassword && (
                     <button
                       onClick={() => setIsChangingPassword(true)}
-                      className="text-xs font-bold  text-emerald-500 hover:text-emerald-600 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-full transition"
+                      className="text-xs font-bold  text-emerald-500 hover:text-emerald-600 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-full transition cursor-pointer "
                     >
                       Change Password
                     </button>
@@ -238,13 +238,13 @@ export default function Settings() {
                     <div className="flex gap-2">
                       <button
                         onClick={handlePasswordUpdate}
-                        className="flex-1 h-10 bg-emerald-500 text-white rounded-lg text-xs font-bold hover:bg-emerald-600 transition"
+                        className="flex-1 h-10 bg-emerald-500 text-white rounded-lg text-xs font-bold hover:bg-emerald-600 transition cursor-pointer "
                       >
                         Update Password
                       </button>
                       <button
                         onClick={() => setIsChangingPassword(false)}
-                        className="px-4 h-10 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-white rounded-lg text-xs font-medium"
+                        className="px-4 h-10 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-white rounded-lg text-xs font-medium cursor-pointer "
                       >
                         Cancel
                       </button>
@@ -272,7 +272,7 @@ export default function Settings() {
                 <div className="mt-2 flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit border border-slate-200 dark:border-slate-700">
                   <button
                     onClick={() => theme !== "light" && toggleTheme()}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all cursor-pointer ${
                       theme === "light"
                         ? "bg-white text-emerald-600 shadow-sm font-bold"
                         : "text-slate-500 hover:text-slate-700"
@@ -282,7 +282,7 @@ export default function Settings() {
                   </button>
                   <button
                     onClick={() => theme !== "dark" && toggleTheme()}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all cursor-pointer  ${
                       theme === "dark"
                         ? "bg-slate-700 text-emerald-400 shadow-sm font-bold"
                         : "text-slate-500 hover:text-slate-400"
@@ -333,7 +333,7 @@ export default function Settings() {
             {!isConfirmingDelete ? (
               <button
                 onClick={() => setIsConfirmingDelete(true)}
-                className="w-full h-11 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg text-sm font-bold hover:bg-red-500 hover:text-white transition"
+                className="w-full h-11 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg cursor-pointer text-sm font-bold hover:bg-red-500 hover:text-white transition"
               >
                 Delete Account
               </button>

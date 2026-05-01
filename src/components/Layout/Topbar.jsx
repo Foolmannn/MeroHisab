@@ -90,7 +90,7 @@ export default function Topbar() {
   };
 
   return (
-<header className="fixed top-0 right-0 w-full lg:w-[calc(100%-13rem)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center h-16 lg:h-20 pl-14 pr-3 lg:px-8 py-2">
+<header className="fixed top-0 right-0 w-full lg:w-[calc(100%-13rem)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center h-16 lg:h-17 pl-14 pr-3 lg:px-8 py-2 ">
   
   {/* QUICK COMMAND BAR */}
   <form 

@@ -79,7 +79,7 @@ export default function ReportsSection() {
   };
 
   return (
-    <main className="lg:ml-52 pt-20 lg:pt-17 px-4 md:px-6 pb-6 h-screen overflow-y-auto lg:overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
+    <main className="lg:ml-52 pt-20 lg:pt-23 px-4 md:px-6 pb-6 h-screen overflow-y-auto bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-4">

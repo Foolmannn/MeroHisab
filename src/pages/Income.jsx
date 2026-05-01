@@ -52,7 +52,7 @@ export default function AddIncome() {
   };
 
   return (
-<main className="lg:ml-52 pt-20 lg:pt-17 px-4 md:px-6 pb-20 bg-slate-50 dark:bg-slate-950 transition-colors">
+<main className="lg:ml-52 pt-20 lg:pt-23 px-4 md:px-6 pb-20 bg-slate-50 dark:bg-slate-950 transition-colors">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
           
