@@ -45,14 +45,28 @@ export default function SummaryCards() {
 
   const stats = calculateData();
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-      <Card 
-        title="Total Balance" 
-        value={`${currency}${stats.balance.toLocaleString()}`} 
-        icon={MdAccountBalanceWallet}
-        variant="balance" 
-      />
+return (
+    /* 
+       The container remains grid-cols-2 for mobile.
+       On desktop (lg), it switches to grid-cols-5.
+    */
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+      
+      {/* 
+          TOTAL BALANCE: 
+          - col-span-2: Takes full width on mobile.
+          - lg:col-span-1: Takes only 1/5th width on desktop.
+      */}
+      <div className="col-span-2 lg:col-span-1">
+        <Card 
+          title="Total Balance" 
+          value={`${currency}${stats.balance.toLocaleString()}`} 
+          icon={MdAccountBalanceWallet}
+          variant="balance" 
+        />
+      </div>
+
+      {/* The rest of the cards stay as col-span-1 by default */}
       <Card 
         title="Real Income" 
         value={`${currency}${stats.income.toLocaleString()}`} 
@@ -93,17 +107,24 @@ function Card({ title, value, icon: Icon, variant }) {
 
   const activeColor = iconColors[variant] || iconColors.default;
 
+const isBalance = variant === "balance";
+
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl shadow-sm flex flex-col gap-3 transition-all hover:shadow-md">
+    <div className={`
+      border rounded-xl p-4 shadow-sm flex flex-col gap-1 transition-all
+      ${isBalance 
+        ? "bg-blue-600 dark:bg-blue-600 border-blue-500 text-white" 
+        : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800"}
+    `}>
       <div className="flex items-center justify-between">
-        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        <p className={`text-[10px] font-bold uppercase tracking-wider ${isBalance ? "text-blue-100" : "text-slate-500"}`}>
           {title}
         </p>
-        <div className={`p-1.5 rounded-lg ${activeColor}`}>
-          {Icon && <Icon className="w-5 h-5" />}
+        <div className={`p-1.5 rounded-lg ${isBalance ? "bg-white/20 text-white" : activeColor}`}>
+          {Icon && <Icon size={isBalance ? 22 : 18} />}
         </div>
       </div>
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+      <h2 className={`font-bold truncate ${isBalance ? "text-2xl md:text-3xl text-white" : "text-lg md:text-2xl text-slate-900 dark:text-slate-100"}`}>
         {value}
       </h2>
     </div>

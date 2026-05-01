@@ -1,83 +1,45 @@
-// export default function Dashboard({transactions}) {
-//   // 1. Initialize state directly from localStorage
-//   // const [transactions, setTransactions] = useState(() => {
-//   //   const saved = localStorage.getItem("transactions");
-//   //   return saved ? JSON.parse(saved) : [];
-//   // });
-
-//   // Now, this log will show the data immediately on the first render
-//   console.log("Dashboard received:", transactions);
-//   console.log("Hellow ")
-
-//   const calculateSummary = (data) => {
-//     const income = data
-//       .filter(t => t.type === "income" || t.type === "borrow")
-//       .reduce((sum, t) => sum + t.amount, 0);
-
-//     const expense = data
-//       .filter(t => t.type === "expense" || t.type === "lend")
-//       .reduce((sum, t) => sum + t.amount, 0);
-
-//     const borrowed = data.filter(t => t.type === "borrow").reduce((sum, t) => sum + t.amount, 0);
-//     const lent = data.filter(t => t.type === "lend").reduce((sum, t) => sum + t.amount, 0);
-
-//     return { income, expense, borrowed, lent, balance: income - expense };
-//   };
-
-//   const summary = calculateSummary(transactions);
-
-//   return (
-//     <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950">
-//       <SummaryCards summary={summary} />
-
-//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-//         {/* 2. CRITICAL: Pass the transactions to your components! */}
-//         <ChartSection transactions={transactions} />
-//         <CategoryChart transactions={transactions} />
-//         <TransactionsTable transactions={transactions} />
-//       </div>
-//     </main>
-//   );
-// }
-
-
-// import { useTransactions } from "../contexts/TransactionContext";
 import SummaryCards from "../components/Layout/SummaryCards";
 import ChartSection from "../components/Layout/ChartSection";
 import CategoryChart from "../components/Layout/CategoryChart";
 import TransactionsTable from "../components/Layout/TransactionsTable";
 
 export default function Dashboard() {
-  // Grab data from context
-
-  // const calculateSummary = (data = []) => {
-  //   const income = data
-  //     .filter(t => t.type === "income" || t.type === "borrow")
-  //     .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-
-  //   const expense = data
-  //     .filter(t => t.type === "expense" || t.type === "lend")
-  //     .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-
-  //   return {
-  //     income,
-  //     expense,
-  //     borrowed: data.filter(t => t.type === "borrow").reduce((sum, t) => sum + Number(t.amount || 0), 0),
-  //     lent: data.filter(t => t.type === "lend").reduce((sum, t) => sum + Number(t.amount || 0), 0),
-  //     balance: income - expense
-  //   };
-  // };
-  // console.log("Dash:",transactions)
-
-  // const summary = calculateSummary(transactions);
-
   return (
-    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950">
-      <SummaryCards  />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-        <ChartSection />
-        <CategoryChart />
-        <TransactionsTable  />
+    /* 
+       CHANGE 1: Responsive Margin 
+       - ml-0 on mobile (small screens)
+       - lg:ml-52 on desktop (large screens)
+       CHANGE 2: Horizontal Padding
+       - px-4 for mobile to maximize space
+       - md:px-6 for tablets/desktop
+    */
+    <main className="ml-0 lg:ml-52 pt-20 px-4 md:px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-all duration-300">
+      
+      {/* Summary Cards usually handle their own grid, so keep as is */}
+      <SummaryCards />
+      
+      {/* 
+         CHANGE 3: Improved Grid Layout
+         - grid-cols-1: Everything stacks vertically on mobile
+         - lg:grid-cols-3: Side-by-side on desktop
+         - Added 'items-start' to prevent charts from stretching weirdly if one is taller
+      */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6 items-start">
+        
+        {/* Typically, you'd want the main chart to take more space on Desktop */}
+        <div className="lg:col-span-2">
+          <ChartSection />
+        </div>
+
+        <div className="lg:col-span-1">
+          <CategoryChart />
+        </div>
+
+        {/* Transactions Table should probably span the full width below the charts on desktop */}
+        <div className="lg:col-span-3">
+          <TransactionsTable />
+        </div>
+        
       </div>
     </main>
   );

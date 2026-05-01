@@ -1,0 +1,1416 @@
+import { useState } from "react";
+import { useTransactions } from "../contexts/TransactionContext";
+import {
+  MdCategory,
+  MdCalendarToday,
+  MdSync,
+  MdCheckCircle,
+} from "react-icons/md";
+
+export default function AddExpense() {
+  // 1. Grab addTransaction instead of setTransactions
+  const { transactions, currency, addTransaction } = useTransactions();
+
+  const [form, setForm] = useState({
+    expenseAmount: "",
+    expenseCategory: "",
+    expenseDate: new Date().toISOString().split("T")[0],
+    expenseNote: "",
+    isRecurring: false,
+    frequency: "daily",
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.expenseAmount || !form.expenseCategory) {
+      alert("Fill required fields");
+      return;
+    }
+
+    const newTransaction = {
+      id: Date.now().toString(),
+      type: "expense",
+      amount: Number(form.expenseAmount),
+      category: form.expenseCategory,
+      date: form.expenseDate,
+      note: form.expenseNote,
+      person: null,
+      isRecurring: form.isRecurring, // State from your checkbox
+      frequency: "daily", // You can add a select dropdown for this
+      lastProcessed: form.expenseDate,
+    };
+
+    // 2. Use the central addTransaction function
+    // This handles both state update AND LocalStorage saving
+    addTransaction(newTransaction);
+
+    // setForm({
+    //   expenseAmount: "",
+    //   expenseCategory: "",
+    //   expenseDate: new Date().toISOString().split("T")[0],
+    //   expenseNote: ""
+    // });
+  };
+
+  return (
+<main className="lg:ml-52 pt-20 lg:pt-17 px-4 md:px-6 pb-6 h-screen overflow-y-auto lg:overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* LEFT SIDE: FORM */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-4 ">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                New Expense
+              </h2>
+            </div>
+
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+              {/* AMOUNT */}
+              <div>
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                  AMOUNT
+                </label>
+                <div className="relative mt-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">
+                    {currency}
+                  </span>
+                  <input
+                    type="number"
+                    name="expenseAmount"
+                    value={form.expenseAmount}
+                    onChange={handleChange}
+                    placeholder="0.00"
+                    className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none text-lg font-semibold text-slate-800 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* CATEGORY + DATE */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                    CATEGORY
+                  </label>
+                  <div className="relative mt-1">
+                    <MdCategory className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    <select
+                      name="expenseCategory"
+                      value={form.expenseCategory}
+                      onChange={handleChange}
+                      className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white appearance-none"
+                    >
+                      <option value="">Select Category</option>
+                      <option>Food</option>
+                      <option>Transport</option>
+                      <option>Shopping</option>
+                      <option>Health</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                    DATE
+                  </label>
+                  <div className="relative mt-1">
+                    <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    <input
+                      type="date"
+                      name="expenseDate"
+                      value={form.expenseDate}
+                      onChange={handleChange}
+                      className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* NOTES */}
+              <div>
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                  NOTES
+                </label>
+                <textarea
+                  name="expenseNote"
+                  value={form.expenseNote}
+                  onChange={handleChange}
+                  rows="2"
+                  placeholder="What was this for?"
+                  className="w-full mt-1 p-3 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white"
+                />
+              </div>
+{/* RECURRING SECTION */}
+<div className="relative p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+  <div className="flex justify-between items-center">
+    <div className="flex gap-3 items-center">
+      <MdSync className="text-emerald-500 w-5 h-5" />
+      <div>
+        <p className="text-sm font-semibold text-slate-800 dark:text-white">
+          Recurring
+        </p>
+        <p className="text-xs text-slate-500">Repeat {form.frequency}</p>
+      </div>
+    </div>
+    <input
+      type="checkbox"
+      name="isRecurring"
+      checked={form.isRecurring}
+      onChange={(e) => setForm({ ...form, isRecurring: e.target.checked })}
+      className="cursor-pointer w-5 h-5 accent-emerald-500"
+    />
+  </div>
+
+  {/* UPWARD OPENING SELECT */}
+  {form.isRecurring && (
+    <div className="absolute bottom-full left-0 w-full mb-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+      <div className="bg-white dark:bg-slate-800 border border-emerald-200 dark:border-slate-700 shadow-xl rounded-lg p-2">
+        <label className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase px-2">
+          Select Frequency
+        </label>
+        <select
+          name="frequency"
+          value={form.frequency}
+          onChange={handleChange}
+          className="w-full mt-1 h-10 px-2 bg-slate-50 dark:bg-slate-900 border-none rounded-md text-sm outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+        >
+          <option value="daily">Daily (Every Day)</option>
+          <option value="weekly">Weekly (Every Week)</option>
+          <option value="monthly">Monthly (Every Month)</option>
+        </select>
+      </div>
+      {/* Tiny Arrow pointing down to the recurring box */}
+      <div className="w-3 h-3 bg-white dark:bg-slate-800 border-r border-b border-emerald-200 dark:border-slate-700 rotate-45 mx-auto -mt-1.5 shadow-sm"></div>
+    </div>
+  )}
+</div>
+
+
+              {/* BUTTONS */}
+              <div className="flex gap-3 mt-1">
+                <button
+                  type="submit"
+                  className="flex-1 h-11 bg-emerald-500 text-white rounded-full font-semibold flex items-center justify-center gap-2 hover:bg-emerald-600 transition active:scale-95"
+                >
+                  <MdCheckCircle />
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="px-6 h-11 bg-slate-200 dark:bg-slate-700 rounded-full hover:bg-slate-300 dark:hover:bg-slate-600 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE: RECENT HISTORY */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
+            <h3 className="font-bold mb-4 text-slate-800 dark:text-white">
+              Recent Expenses
+            </h3>
+
+            <div className="flex flex-col gap-1">
+              {[...transactions] // Spread to avoid mutating original state before sort
+                .filter((t) => t.type === "expense")
+                .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort newest first
+                .slice(0, 5) // Show top 5
+                .map((t) => (
+                  <TransactionItem
+                    key={t.id}
+                    title={t.category}
+                    amount={`- $${t.amount}`}
+                    date={t.date}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function TransactionItem({ title, amount, positive, date }) {
+  return (
+    <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition border-b border-slate-100 dark:border-slate-800 last:border-none rounded-lg">
+      <div className="flex flex-col">
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+          {title}
+        </p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{date}</p>
+      </div>
+      <div
+        className={`text-sm font-semibold ${positive ? "text-emerald-500" : "text-red-500"}`}
+      >
+        {amount}
+      </div>
+    </div>
+  );
+}
+import React, { useState } from "react";
+import { useTransactions } from "../contexts/TransactionContext"; 
+import { 
+  MdPerson, 
+  MdCalendarToday, 
+  MdAssignmentReturn,
+  MdCheckCircle,
+  MdRadioButtonUnchecked
+} from "react-icons/md";
+
+export default function BorrowSection() {
+  const { transactions, addTransaction, updateTransaction, currency } = useTransactions();
+
+  const [form, setForm] = useState({
+    borrowedFrom: "",
+    amount: "",
+    date: new Date().toISOString().split("T")[0],
+    dueDate: "",
+    notes: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.borrowedFrom || !form.amount) {
+      alert("Please enter the source and amount");
+      return;
+    }
+
+    const newTransaction = {
+      id: Date.now().toString(),
+      type: "borrow",
+      amount: Number(form.amount),
+      person: form.borrowedFrom,
+      date: form.date,
+      dueDate: form.dueDate,
+      note: form.notes,
+      status: "Pending", 
+    };
+
+    addTransaction(newTransaction);
+    setForm({ borrowedFrom: "", amount: "", date: new Date().toISOString().split("T")[0], dueDate: "", notes: "" });
+  };
+
+  // Logic updated to "Paid"
+  const handleToggleStatus = (id, currentStatus) => {
+    const newStatus = currentStatus === "Pending" ? "Paid" : "Pending";
+    updateTransaction(id, { status: newStatus });
+  };
+
+  return (
+    <main className="ml-52 pt-17 px-6 pb-6 h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* LEFT SIDE: FORM */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-3 border border-transparent dark:border-slate-800">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">New Borrowing</h2>
+
+            <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+              {/* AMOUNT */}
+              <div>
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">AMOUNT</label>
+                <div className="relative mt-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">{currency}</span>
+                  <input type="number" name="amount" value={form.amount} onChange={handleChange} placeholder="0.00" className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 focus:ring-2 focus:ring-red-500 outline-none text-lg font-semibold text-slate-800 dark:text-white" />
+                </div>
+              </div>
+
+              {/* BORROWED FROM */}
+              <div className="mt-1">
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold ">BORROWED FROM</label>
+                <div className="relative mt-1">
+                  <MdPerson className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500" />
+                  <input type="text" name="borrowedFrom" value={form.borrowedFrom} onChange={handleChange} placeholder="Name" className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">DATE</label>
+                  <div className="relative">
+                    <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500" />
+                    <input type="date" name="date" value={form.date} onChange={handleChange} className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+                  </div>
+                </div>
+                <div>
+                   <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">DUE DATE</label>
+                   <div className="relative">
+                    <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500" />
+                    <input type="date" name="dueDate" value={form.dueDate} onChange={handleChange} className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-0">
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold">NOTES</label>
+                <textarea name="notes" value={form.notes} onChange={handleChange} rows="3" placeholder="Why borrow?" className="w-full mt-1 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+              </div>
+
+              <div className="flex gap-3 mt-4">
+                <button type="submit" className="flex-1 h-11 bg-red-500 text-white rounded-full font-semibold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-lg cursor-pointer">
+                  <MdAssignmentReturn /> Save Borrow
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE: HISTORY */}
+        <div className="lg:col-span-5 flex flex-col gap-6 overflow-hidden h-full">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6 border border-transparent dark:border-slate-800 flex flex-col max-h-[80vh]">
+            <h3 className="font-bold mb-4 text-slate-800 dark:text-white">Borrow History</h3>
+
+            <div className="flex flex-col gap-1 overflow-y-auto pr-2 custom-scrollbar">
+              {[...transactions]
+                .filter(t => t.type === "borrow")
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map(t => (
+                  <BorrowItem
+                    key={t.id}
+                    t={t}
+                    currency={currency}
+                    onToggle={() => handleToggleStatus(t.id, t.status)}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function BorrowItem({ t, currency, onToggle }) {
+  const isPaid = t.status === "Paid";
+
+  return (
+    <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition border-b border-slate-100 dark:border-slate-800 rounded-lg">
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onToggle}
+          className={`text-2xl transition-colors ${isPaid ? "text-emerald-500" : "text-slate-300 dark:text-slate-600"}`}
+        >
+          {isPaid ? <MdCheckCircle /> : <MdRadioButtonUnchecked />}
+        </button>
+
+        <div className="flex flex-col">
+          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{t.person}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t.date}</p>
+            {t.dueDate && (
+              <span className={`text-[10px] font-medium ${isPaid ? "text-slate-400 line-through" : "text-red-500"}`}>
+                Due: {t.dueDate}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="text-right">
+        <div className={`text-sm font-semibold ${isPaid ? "text-slate-400" : "text-red-500"}`}>
+          {currency}{t.amount.toLocaleString()}
+        </div>
+        <span className={`text-[9px] uppercase font-bold ${isPaid ? "text-emerald-500" : "text-orange-500"}`}>
+          {t.status || "Pending"}
+        </span>
+      </div>
+    </div>
+  );
+}
+// export default function Dashboard({transactions}) {
+//   // 1. Initialize state directly from localStorage
+//   // const [transactions, setTransactions] = useState(() => {
+//   //   const saved = localStorage.getItem("transactions");
+//   //   return saved ? JSON.parse(saved) : [];
+//   // });
+
+//   // Now, this log will show the data immediately on the first render
+//   console.log("Dashboard received:", transactions);
+//   console.log("Hellow ")
+
+//   const calculateSummary = (data) => {
+//     const income = data
+//       .filter(t => t.type === "income" || t.type === "borrow")
+//       .reduce((sum, t) => sum + t.amount, 0);
+
+//     const expense = data
+//       .filter(t => t.type === "expense" || t.type === "lend")
+//       .reduce((sum, t) => sum + t.amount, 0);
+
+//     const borrowed = data.filter(t => t.type === "borrow").reduce((sum, t) => sum + t.amount, 0);
+//     const lent = data.filter(t => t.type === "lend").reduce((sum, t) => sum + t.amount, 0);
+
+//     return { income, expense, borrowed, lent, balance: income - expense };
+//   };
+
+//   const summary = calculateSummary(transactions);
+
+//   return (
+//     <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950">
+//       <SummaryCards summary={summary} />
+
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+//         {/* 2. CRITICAL: Pass the transactions to your components! */}
+//         <ChartSection transactions={transactions} />
+//         <CategoryChart transactions={transactions} />
+//         <TransactionsTable transactions={transactions} />
+//       </div>
+//     </main>
+//   );
+// }
+
+
+// import { useTransactions } from "../contexts/TransactionContext";
+import SummaryCards from "../components/Layout/SummaryCards";
+import ChartSection from "../components/Layout/ChartSection";
+import CategoryChart from "../components/Layout/CategoryChart";
+import TransactionsTable from "../components/Layout/TransactionsTable";
+
+export default function Dashboard() {
+  // Grab data from context
+
+  // const calculateSummary = (data = []) => {
+  //   const income = data
+  //     .filter(t => t.type === "income" || t.type === "borrow")
+  //     .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+  //   const expense = data
+  //     .filter(t => t.type === "expense" || t.type === "lend")
+  //     .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+  //   return {
+  //     income,
+  //     expense,
+  //     borrowed: data.filter(t => t.type === "borrow").reduce((sum, t) => sum + Number(t.amount || 0), 0),
+  //     lent: data.filter(t => t.type === "lend").reduce((sum, t) => sum + Number(t.amount || 0), 0),
+  //     balance: income - expense
+  //   };
+  // };
+  // console.log("Dash:",transactions)
+
+  // const summary = calculateSummary(transactions);
+
+  return (
+    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950">
+      <SummaryCards  />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <ChartSection />
+        <CategoryChart />
+        <TransactionsTable  />
+      </div>
+    </main>
+  );
+}
+import { useState } from "react";
+import { useTransactions } from "../contexts/TransactionContext"; 
+
+export default function AddIncome() {
+  // 1. Destructure addTransaction instead of setTransactions
+  const { transactions, addTransaction,currency } = useTransactions();
+
+  const [form, setForm] = useState({
+    amount: "",
+    category: "Salary",
+    date: new Date().toISOString().split("T")[0],
+    note: "",
+    person: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.amount) {
+      alert("Amount is required");
+      return;
+    }
+
+    const newTransaction = {
+      id: Date.now().toString(),
+      type: "income", // Crucial for filtering
+      amount: Number(form.amount),
+      category: form.category,
+      date: form.date,
+      note: form.note,
+      person: form.person || null,
+    };
+
+    // 2. Use the centralized function to save and update state
+    addTransaction(newTransaction);
+
+    // Reset Form
+    setForm({
+      amount: "",
+      category: "Salary",
+      date: new Date().toISOString().split("T")[0],
+      note: "",
+      person: "",
+    });
+  };
+
+  return (
+    <main className="ml-52 pt-20 px-6 pb-4 h-screen bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden dark:text-slate-400 ">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+          
+          {/* FORM SECTION */}
+          <div className="lg:col-span-2 space-y-6">
+            <section className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-md dark:shadow-none border border-slate-100 dark:border-slate-800">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">
+                Add Income
+              </h2>
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                {/* AMOUNT */}
+                <div className="space-y-1">
+                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                    AMOUNT
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-600 text-xl font-bold">
+                    {currency}
+                    </span>
+                    <input
+                      type="number"
+                      name="amount"
+                      value={form.amount}
+                      onChange={handleChange}
+                      placeholder="0.00"
+                      className="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-xl font-semibold
+                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                    />
+                  </div>
+                </div>
+
+                {/* CATEGORY + DATE */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                      CATEGORY
+                    </label>
+                    <select
+                      name="category"
+                      value={form.category}
+                      onChange={handleChange}
+                      className="w-full h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800
+                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                    >
+                      <option>Salary</option>
+                      <option>Freelance</option>
+                      <option>Gift</option>
+                      <option>Investments</option>
+                      <option>Refund</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                      DATE
+                    </label>
+                    <input
+                      type="date"
+                      name="date"
+                      value={form.date}
+                      onChange={handleChange}
+                      className="w-full h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800
+                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                    />
+                  </div>
+                </div>
+
+                {/* NOTES */}
+                <div className="space-y-1">
+                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 ">
+                    NOTES (OPTIONAL)
+                  </label>
+                  <textarea
+                    name="note"
+                    value={form.note}
+                    onChange={handleChange}
+                    rows="3"
+                    placeholder="Describe where this income came from..."
+                    className="w-full p-4 rounded-lg bg-slate-100 dark:bg-slate-800
+                    border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-400"
+                  />
+                </div>
+
+                {/* BUTTONS */}
+                <div className="flex flex-col md:flex-row gap-4 pt-1">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-full
+                    transition active:scale-95"
+                  >
+                    Confirm Income
+                  </button>
+                  <button
+                    type="button"
+                    className="px-6 py-3 rounded-full bg-slate-200 dark:bg-slate-800
+                    text-slate-700 dark:text-slate-300 font-semibold hover:opacity-80 transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </section>
+          </div>
+
+          {/* SIDE CARD: RECENT INCOMES */}
+          <div className="w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden h-3/4 ">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+                Recent Incomes
+              </h3>
+            </div>
+
+            <div className="flex flex-col">
+              {[...transactions]
+                .filter((t) => t.type === "income")
+                .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort newest first
+                .slice(0, 5)
+                .map((t) => (
+                  <TransactionItem
+                    key={t.id}
+                    title={t.category}
+                    amount={`+ ${currency}${t.amount}`}
+                    positive
+                    date={t.date}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function TransactionItem({ title, amount, positive, date }) {
+  return (
+    <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition border-b border-slate-100 dark:border-slate-800 last:border-none">
+      <div className="flex flex-col">
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+          {title}
+        </p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          {date}
+        </p>
+      </div>
+      <div className={`text-sm font-semibold ${positive ? "text-emerald-500" : "text-red-500"}`}>
+        {amount}
+      </div>
+    </div>
+  );
+}
+import React, { useState } from "react";
+import { useTransactions } from "../contexts/TransactionContext"; 
+import { 
+  MdPerson, 
+  MdCalendarToday, 
+  MdNotes, 
+  MdCheckCircle, 
+  MdRadioButtonUnchecked 
+} from "react-icons/md";
+
+export default function LendSection() {
+  // Added updateTransaction from context
+  const { transactions, currency, addTransaction, updateTransaction } = useTransactions();
+
+  const [form, setForm] = useState({
+    name: "",
+    amount: "",
+    date: new Date().toISOString().split("T")[0],
+    returnDate: "",
+    notes: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.name || !form.amount) {
+      alert("Please enter a name and amount");
+      return;
+    }
+
+    const newTransaction = {
+      id: Date.now().toString(),
+      type: "lend",
+      amount: Number(form.amount),
+      person: form.name,
+      date: form.date,
+      returnDate: form.returnDate,
+      note: form.notes,
+      status: "Pending", // Default status for new lending
+    };
+
+    addTransaction(newTransaction);
+    setForm({ name: "", amount: "", date: new Date().toISOString().split("T")[0], returnDate: "", notes: "" });
+  };
+
+  // Toggle logic for Settlement
+  const handleToggleStatus = (id, currentStatus) => {
+    const newStatus = currentStatus === "Pending" ? "Settled" : "Pending";
+    updateTransaction(id, { status: newStatus });
+  };
+
+  return (
+    <main className="ml-52 pt-17 px-6 pb-6 h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* LEFT SIDE: FORM */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-3 border border-transparent dark:border-slate-800">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">New Lending</h2>
+            <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+              {/* AMOUNT */}
+              <div>
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Amount</label>
+                <div className="relative mt-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-slate-400">{currency}</span>
+                  <input type="number" name="amount" value={form.amount} onChange={handleChange} placeholder="0.00" className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none text-lg font-semibold text-slate-800 dark:text-white" />
+                </div>
+              </div>
+
+              {/* PERSON */}
+              <div className="mt-1">
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Lent To</label>
+                <div className="relative mt-1">
+                  <MdPerson className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                  <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Date</label>
+                  <div className="relative mt-1">
+                    <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    <input type="date" name="date" value={form.date} onChange={handleChange} className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Return Date</label>
+                  <div className="relative mt-1">
+                    <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    <input type="date" name="returnDate" value={form.returnDate} onChange={handleChange} className="w-full h-11 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-0">
+                <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Notes</label>
+                <textarea name="notes" value={form.notes} onChange={handleChange} rows="3" placeholder="Why did you lend it?" className="w-full mt-1 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 outline-none text-slate-800 dark:text-white" />
+              </div>
+
+              <div className="flex gap-3 mt-1">
+                <button type="submit" className="flex-1 h-11 bg-emerald-500 text-white rounded-full font-semibold flex items-center justify-center gap-2 hover:bg-emerald-600 transition active:scale-95 shadow-lg cursor-pointer">
+                  <MdCheckCircle /> Save Record
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE: HISTORY */}
+        <div className="lg:col-span-5 flex flex-col gap-6 overflow-hidden h-full">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-6 border border-transparent dark:border-slate-800 flex flex-col max-h-[80vh]">
+            <h3 className="font-bold mb-4 text-slate-800 dark:text-white">Lend History</h3>
+            <div className="flex flex-col gap-1 overflow-y-auto pr-2 custom-scrollbar">
+              {transactions.filter(t => t.type === "lend").length === 0 ? (
+                <div className="text-center py-10 text-slate-400 text-sm italic">No records yet.</div>
+              ) : (
+                [...transactions]
+                  .filter(t => t.type === "lend")
+                  .sort((a, b) => new Date(b.date) - new Date(a.date))
+                  .map(t => (
+                    <LendItem 
+                      key={t.id} 
+                      t={t} 
+                      currency={currency} 
+                      onToggle={() => handleToggleStatus(t.id, t.status)} 
+                    />
+                  ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+// Sub-component for clarity
+function LendItem({ t, currency, onToggle }) {
+  const isSettled = t.status === "Settled";
+
+  return (
+    <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition border-b border-slate-100 dark:border-slate-800 rounded-lg">
+      <div className="flex items-center gap-3">
+        <button onClick={onToggle} className={`text-2xl transition-colors ${isSettled ? "text-emerald-500" : "text-slate-300 dark:text-slate-600"}`}>
+          {isSettled ? <MdCheckCircle /> : <MdRadioButtonUnchecked />}
+        </button>
+        <div className="flex flex-col">
+          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{t.person}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t.date}</p>
+            {t.returnDate && (
+              <span className={`text-[10px] font-medium ${isSettled ? "text-slate-400 line-through" : "text-emerald-500"}`}>
+                Due: {t.returnDate}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="text-right">
+        <div className={`text-sm font-bold ${isSettled ? "text-slate-400" : "text-emerald-500"}`}>
+          {currency}{t.amount.toLocaleString()}
+        </div>
+        <span className={`text-[9px] uppercase font-bold ${isSettled ? "text-emerald-500" : "text-orange-500"}`}>
+          {t.status || "Pending"}
+        </span>
+      </div>
+    </div>
+  );
+}
+import {
+  MdTrendingUp,
+  MdTrendingDown,
+  MdFileDownload,
+  MdAnalytics,
+} from "react-icons/md";
+import { useState, useMemo } from "react";
+import { useTransactions } from "../contexts/TransactionContext";
+
+export default function ReportsSection() {
+  const { transactions, currency } = useTransactions();
+  const [range, setRange] = useState("monthly");
+
+  // --- DATA FILTERING LOGIC ---
+  const reportData = useMemo(() => {
+    const now = new Date();
+    return transactions.filter((t) => {
+      const tDate = new Date(t.date);
+      if (range === "monthly") {
+        return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
+      }
+      if (range === "quarterly") {
+        const currentQuarter = Math.floor(now.getMonth() / 3);
+        const tQuarter = Math.floor(tDate.getMonth() / 3);
+        return currentQuarter === tQuarter && tDate.getFullYear() === now.getFullYear();
+      }
+      if (range === "yearly") {
+        return tDate.getFullYear() === now.getFullYear();
+      }
+      return true;
+    });
+  }, [transactions, range]);
+
+  // --- STATS CALCULATION ---
+  const stats = useMemo(() => {
+    const income = reportData
+      .filter((t) => t.type === "income" || (t.type === "lend" && t.status === "Settled"))
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    const expenses = reportData
+      .filter((t) => t.type === "expense" || (t.type === "borrow" && t.status === "Paid"))
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+
+    return {
+      income,
+      expenses,
+      net: income - expenses,
+    };
+  }, [reportData]);
+
+  // --- EXPORT CSV FUNCTION ---
+  const exportToCSV = () => {
+    if (reportData.length === 0) return alert("No data to export");
+    
+    const headers = ["Date,Description,Amount,Type,Status\n"];
+    const rows = reportData.map(t => 
+      `${t.date},${t.person || t.note || "N/A"},${t.amount},${t.type},${t.status}`
+    );
+    
+    const blob = new Blob([headers + rows.join("\n")], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `MeroHisab_Report_${range}.csv`;
+    a.click();
+  };
+
+  return (
+    <main className="ml-52 pt-20 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+      <div className="max-w-6xl mx-auto flex flex-col gap-6">
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row justify-between md:items-end gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Financial Reports</h2>
+            <p className="text-sm text-slate-500">Overview for current {range} period</p>
+          </div>
+
+          {/* FILTER BUTTONS */}
+          <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg w-fit">
+            {["monthly", "quarterly", "yearly"].map((r) => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                className={`px-4 py-1.5 text-sm rounded-md capitalize transition cursor-pointer ${
+                  range === r
+                    ? "bg-white dark:bg-slate-700 shadow text-emerald-600 font-bold"
+                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* TOP CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card
+            icon={<MdTrendingUp className="text-emerald-500" />}
+            title={`Total Savings (${range})`}
+            value={`${currency}${stats.income.toLocaleString()}`}
+            positive
+          />
+          <Card
+            icon={<MdTrendingDown className="text-red-500" />}
+            title="Total Expenses"
+            value={`${currency}${stats.expenses.toLocaleString()}`}
+            positive={false}
+          />
+          <Card
+            icon={<MdAnalytics className="text-blue-500" />}
+            title="Net Balance"
+            value={`${currency}${stats.net.toLocaleString()}`}
+            positive={stats.net >= 0}
+          />
+        </div>
+
+        {/* MAIN GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* MOCK CHART - Representing actual volume */}
+          <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-xl shadow p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-slate-800 dark:text-white">Cash Flow Analysis</h3>
+              <button onClick={exportToCSV} className="flex items-center gap-2 text-emerald-500 text-sm cursor-pointer hover:underline">
+                <MdFileDownload /> Export CSV
+              </button>
+            </div>
+            <div className="flex items-end gap-2 h-56 border-b border-slate-100 dark:border-slate-800 pb-2">
+              {/* This scales based on your real income vs expenses */}
+              <div className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+                  <div className="w-12 bg-emerald-400 rounded-t transition-all" style={{ height: `${(stats.income / (stats.income + stats.expenses || 1)) * 100}%` }} />
+                  <span className="text-[10px] uppercase font-bold text-slate-400">In</span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+                  <div className="w-12 bg-red-400 rounded-t transition-all" style={{ height: `${(stats.expenses / (stats.income + stats.expenses || 1)) * 100}%` }} />
+                  <span className="text-[10px] uppercase font-bold text-slate-400">Out</span>
+              </div>
+            </div>
+          </div>
+
+          {/* RECENT SETTLED DEBTS */}
+          <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-xl shadow p-6">
+            <h3 className="font-semibold mb-4 text-slate-800 dark:text-white">Settlement Status</h3>
+            <div className="flex flex-col gap-4">
+              <Progress label="Lent Collected" value={Math.round((reportData.filter(t => t.type === 'income' && t.originalType === 'lend').length / reportData.filter(t => t.type === 'lend' || t.originalType === 'lend').length || 0) * 100)} />
+              <Progress label="Borrow Paid" value={Math.round((reportData.filter(t => t.type === 'expense' && t.originalType === 'borrow').length / reportData.filter(t => t.type === 'borrow' || t.originalType === 'borrow').length || 0) * 100)} />
+            </div>
+          </div>
+
+          {/* DATA TABLE */}
+          <div className="lg:col-span-12 bg-white dark:bg-slate-900 rounded-xl shadow p-6">
+             <h3 className="font-semibold text-slate-800 dark:text-white mb-4">Transaction Details</h3>
+            <div className="overflow-x-auto max-h-96 overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="text-slate-500 dark:text-slate-300 text-xs sticky top-0 bg-white dark:bg-slate-900">
+                  <tr className="border-b">
+                    <th className="text-left py-2">Date</th>
+                    <th className="text-left py-2">Source/Person</th>
+                    <th className="text-right py-2">Amount</th>
+                    <th className="text-right py-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="dark:text-slate-400">
+                  {reportData.sort((a,b) => new Date(b.date) - new Date(a.date)).map((t) => (
+                    <Row 
+                      key={t.id} 
+                      date={t.date} 
+                      desc={t.person || t.note || "General"} 
+                      amount={t.amount} 
+                      status={t.status || "Completed"} 
+                      currency={currency}
+                      type={t.type}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function Card({ icon, title, value, positive }) {
+  return (
+    <div className="bg-white dark:bg-slate-900 rounded-xl shadow p-5 flex justify-between items-start">
+      <div>
+        <p className="text-xs text-slate-500 font-bold uppercase tracking-tighter">{title}</p>
+        <h3 className="text-xl font-bold text-slate-800 dark:text-white">{value}</h3>
+      </div>
+      <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">{icon}</div>
+    </div>
+  );
+}
+
+function Progress({ label, value }) {
+  return (
+    <div>
+      <div className="flex justify-between text-xs mb-1">
+        <span className="font-medium text-slate-600 dark:text-slate-400">{label}</span>
+        <span className="text-emerald-500 font-bold">{value}%</span>
+      </div>
+      <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+        <div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function Row({ date, desc, amount, status, currency, type }) {
+  const isExpense = type === 'expense' || type === 'borrow';
+
+  return (
+    <tr className="border-b dark:border-slate-800 last:border-none">
+      <td className="py-3 text-slate-500 text-xs">{date}</td>
+      <td className="py-3 font-medium">{desc}</td>
+      <td className={`py-3 text-right font-bold ${isExpense ? "text-red-500" : "text-emerald-500"}`}>
+        {isExpense ? "-" : "+"}{currency}{Number(amount).toLocaleString()}
+      </td>
+      <td className="py-3 text-right text-[10px] font-bold uppercase">
+        <span className={`px-2 py-1 rounded-full ${status === "Settled" || status === "Paid" || status === "Completed" ? "bg-emerald-100 text-emerald-600" : "bg-orange-100 text-orange-600"}`}>
+          {status}
+        </span>
+      </td>
+    </tr>
+  );
+}
+import React, { useState, useEffect } from "react";
+import { useTransactions } from "../contexts/TransactionContext";
+import { useUser } from "../contexts/UserContext";
+import {
+  MdSecurity,
+  MdCurrencyExchange,
+  MdPerson,
+  MdDeleteForever,
+  MdDownload,
+  MdLock,
+  MdEmail,
+  MdExpandMore
+} from "react-icons/md";
+
+export default function Settings() {
+  const { currency, updateCurrency, setTransactions } = useTransactions();
+  const { user, updateProfile } = useUser();
+
+  // UI Toggle States
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [securityInput, setSecurityInput] = useState({ current: "", next: "" });
+  const [deletePassword, setDeletePassword] = useState("");
+
+  // Form State
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    bio: "",
+    password: "", 
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        bio: user.bio || "",
+        password: "", 
+      });
+    }
+  }, [user]);
+
+  // --- Profile Actions ---
+  const handleProfileSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.firstName) return;
+
+    if (!user && !formData.password) {
+      alert("Please set a password for your new account.");
+      return;
+    }
+
+    const dataToSave = user 
+      ? { ...formData, password: user.password } 
+      : { ...formData };
+
+    updateProfile(dataToSave);
+    alert(user ? "Profile updated!" : "Profile created!");
+  };
+
+  // --- Password Change Logic ---
+  const handlePasswordUpdate = () => {
+    if (securityInput.current === user.password) {
+      updateProfile({ ...user, password: securityInput.next });
+      setIsChangingPassword(false);
+      setSecurityInput({ current: "", next: "" });
+      alert("Password updated successfully.");
+    } else {
+      alert("Current password does not match.");
+    }
+  };
+
+  // --- Functional Delete Logic ---
+  const handleNuclearDelete = () => {
+    if (deletePassword !== user.password) {
+      alert("Incorrect password.");
+      return;
+    }
+
+    if (window.confirm("CRITICAL: This wipes all transactions and profile data. Proceed?")) {
+      // Clear localStorage specifically to avoid clashing with other apps
+      localStorage.removeItem("vault_finance_user_data");
+      localStorage.removeItem("transactions");
+      localStorage.removeItem("app_currency");
+      localStorage.removeItem("theme");
+
+      // Reset Context States
+      setTransactions([]); 
+      updateProfile(null); 
+      
+      // Force hard refresh to clear any cached memory states
+      window.location.replace("/"); 
+    }
+  };
+
+  return (
+    <main className="ml-52 pt-17 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* LEFT SIDE: PROFILE & SECURITY */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+              <MdPerson className="text-emerald-500" /> 
+              {user ? "Profile Settings" : "Create Account"}
+            </h2>
+            
+            <form onSubmit={handleProfileSubmit} className="flex flex-col gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  placeholder="First Name"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                  className="h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white outline-none focus:ring-2 ring-emerald-500/20 border-none"
+                />
+                <input
+                  placeholder="Last Name"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                  className="h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white outline-none focus:ring-2 ring-emerald-500/20 border-none"
+                />
+              </div>
+
+              {/* EMAIL FIELD RESTORED */}
+              <div className="relative">
+                <MdEmail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white outline-none focus:ring-2 ring-emerald-500/20 border-none"
+                />
+              </div>
+
+              {!user && (
+                <div className="relative">
+                  <MdLock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="password"
+                    placeholder="Set Security Password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    className="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white outline-none focus:ring-2 ring-blue-500/20 border-2 border-blue-500/10"
+                  />
+                </div>
+              )}
+
+              <textarea
+                placeholder="Short Bio"
+                value={formData.bio}
+                onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                rows="2"
+                className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white outline-none focus:ring-2 ring-emerald-500/20 border-none"
+              />
+              
+              <button 
+                type="submit"
+                className={`h-11 rounded-full font-bold text-white transition active:scale-95 shadow-lg ${
+                  user ? "bg-emerald-500 shadow-emerald-500/20" : "bg-blue-600 shadow-blue-500/20"
+                }`}
+              >
+                {user ? "Update Profile" : "Create My Profile"}
+              </button>
+            </form>
+
+            {/* PASSWORD MANAGEMENT */}
+            {user && (
+              <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <MdSecurity className="text-emerald-500" />
+                    <h3 className="font-bold text-slate-800 dark:text-white text-sm">Account Security</h3>
+                  </div>
+                  {!isChangingPassword && (
+                    <button 
+                      onClick={() => setIsChangingPassword(true)}
+                      className="text-xs font-bold  text-emerald-500 hover:text-emerald-600 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-full transition"
+                    >
+                      Change Password
+                    </button>
+                  )}
+                </div>
+
+                {isChangingPassword && (
+                  <div className="space-y-3 text-slate-800 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <input 
+                      type="password" 
+                      placeholder="Current Password"
+                      value={securityInput.current}
+                      onChange={(e) => setSecurityInput({...securityInput, current: e.target.value})}
+                      className="w-full h-10 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm dark:text-white outline-none"
+                    />
+                    <input 
+                      type="password" 
+                      placeholder="New Password"
+                      value={securityInput.next}
+                      onChange={(e) => setSecurityInput({...securityInput, next: e.target.value})}
+                      className="w-full h-10 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm dark:text-white outline-none"
+                    />
+                    <div className="flex gap-2">
+                      <button onClick={handlePasswordUpdate} className="flex-1 h-10 bg-emerald-500 text-white rounded-lg text-xs font-bold hover:bg-emerald-600 transition">Update Password</button>
+                      <button onClick={() => setIsChangingPassword(false)} className="px-4 h-10 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-white rounded-lg text-xs font-medium">Cancel</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+{/* Currency selections */}
+<div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
+  <h3 className="font-bold text-xl text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+     Preferences
+  </h3>
+  
+  <div className="space-y-4">
+    <div>
+      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Currency</label>
+      
+      {/* Relative container for the custom dropdown icon */}
+      <div className="relative mt-1">
+        <select 
+          value={currency}
+          onChange={(e) => updateCurrency(e.target.value)}
+          className="w-full h-11 pl-4 pr-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none outline-none appearance-none cursor-pointer focus:ring-2 ring-emerald-500/20"
+        >
+                  <option value="रू">NPR - Nepalese Rupee (रू)</option>
+                <option value="Rs.">NPR - Nepalese Rupee (Rs.)</option>
+                  <option value="₹">INR - Indian Rupee (₹)</option>
+                  <option value="$">USD - US Dollar ($)</option>
+                  <option value="€">EUR - Euro (€)</option>
+                  <option value="৳">BDT - Bangladeshi Taka (৳)</option>
+                  <option value="₨">PKR - Pakistani Rupee (₨)</option>
+                  <option value="£">GBP - British Pound (£)</option>
+                  <option value="¥">JPY - Japanese Yen (¥)</option>
+        </select>
+        
+        {/* The Dropdown Arrow Icon */}
+        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+          <MdExpandMore className="text-slate-500 dark:text-slate-400 text-xl" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          {/* DANGER ZONE */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-red-100 dark:border-red-900/30 overflow-hidden">
+            <h3 className="font-bold text-red-500 mb-2 flex items-center gap-2">
+              <MdDeleteForever className="text-xl" /> Danger Zone
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+              Permanently delete all transactions and your profile data.
+            </p>
+
+            {!isConfirmingDelete ? (
+              <button 
+                onClick={() => setIsConfirmingDelete(true)}
+                className="w-full h-11 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg text-sm font-bold hover:bg-red-500 hover:text-white transition"
+              >
+                Delete Account
+              </button>
+            ) : (
+              <div className="space-y-3 p-3 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-100 dark:border-red-900/20">
+                <input 
+                  type="password" 
+                  placeholder="Enter Password to Wipe Data"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  className="w-full h-10 px-4 rounded-lg bg-white dark:bg-slate-900 border-2 border-red-500 outline-none text-slate-800 dark:text-white text-sm"
+                />
+                <div className="flex gap-2">
+                  <button onClick={handleNuclearDelete} className="flex-1 h-10 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700">Confirm Deletion</button>
+                  <button onClick={() => setIsConfirmingDelete(false)} className="px-4 h-10 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-white rounded-lg text-xs">Cancel</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

@@ -86,31 +86,29 @@ export default function Topbar() {
   }, []);
 
   return (
-    <header className="fixed top-0 right-0 w-[calc(100%-12rem)] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-8 py-2">
+<header className="fixed top-0 right-0 w-full lg:w-[calc(100%-13rem)] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-4 lg:px-8 py-2">
       
       {/* QUICK COMMAND BAR */}
-      <div className={`relative flex items-center gap-3 px-4 py-2 rounded-full w-2/3 transition-all border-2 ${
-        isProcessing ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "bg-slate-100 dark:bg-slate-800 border-transparent"
-      }`}>
-        <MdKeyboardCommandKey className={isProcessing ? "text-emerald-500" : "text-slate-400"} />
-        <input
-          type="text"
-          value={command}
-          onChange={(e) => setCommand(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="e-500-Food-Momo  OR  l-1000-Raj-Fee"
-          className="bg-transparent outline-none text-sm w-full text-slate-800 dark:text-slate-100 font-mono"
-        />
-        {!command && (
-          <span className="absolute right-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest pointer-events-none">
-            Type-Amount-Name-Note
-          </span>
-        )}
-      </div>
+<div className={`relative flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 rounded-full flex-1 lg:flex-none lg:w-2/3 transition-all border-2 ${
+  isProcessing ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "bg-slate-100 dark:bg-slate-800 border-transparent"
+}`}>
+  <MdKeyboardCommandKey className={isProcessing ? "text-emerald-500" : "text-slate-400 shrink-0"} />
+  <input
+    // ... same values ...
+    placeholder="e-500-Food" // Shortened for mobile
+    className="bg-transparent outline-none text-xs lg:text-sm w-full text-slate-800 dark:text-slate-100 font-mono"
+  />
+  {/* Hide the helper text on small screens */}
+  {!command && (
+    <span className="hidden md:block absolute right-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest pointer-events-none">
+      Type-Amount-Name
+    </span>
+  )}
+</div>
 
-      <div className="flex items-center gap-6">
+   <div className="flex items-center gap-2 lg:gap-6 ml-2">
         {/* THEME TOGGLE */}
-        <div className="flex items-center bg-slate-200 dark:bg-slate-800 p-1 rounded-full border border-slate-300 dark:border-slate-700">
+     <div className="hidden sm:flex items-center bg-slate-200 dark:bg-slate-800 p-1 rounded-full border border-slate-300 dark:border-slate-700">
           <button
             onClick={() => theme !== "light" && toggleTheme()}
             className={`w-8 h-8 flex items-center justify-center rounded-full transition cursor-pointer ${

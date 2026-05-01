@@ -1,0 +1,666 @@
+import { useTransactions } from "../../contexts/TransactionContext";
+import CategoryPieChart from "../Charts/CategoryPieChart";
+
+export default function CategoryChart() {
+  const { transactions,currency } = useTransactions();
+
+  return (
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-sm h-full">
+      <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+        Top Categories
+      </h3>
+      <p className="text-xs text-slate-500 mb-6">Spending distribution</p>
+      
+      {transactions?.length > 0 ? (
+        <CategoryPieChart data={transactions} currency={currency} />
+      ) : (
+        <div className="h-64 flex items-center justify-center text-slate-400 italic text-sm">
+          No expenses recorded
+        </div>
+      )}
+    </div>
+  );
+}
+// import { MdShowChart } from "react-icons/md";
+// import Chart from "../Charts/Chart";
+
+// export default function ChartSection() {
+//   return (
+//    <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-sm">
+//       <div className="flex items-center gap-2 mb-4">
+//         <MdShowChart className="w-6 h-6 text-emerald-600" />
+//         <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Spending Trends</h3>
+//       </div>
+
+//   <div className="h-64 flex items-center justify-center text-slate-400 dark:text-slate-500">
+//         Chart Area
+// <Chart />
+//       </div>
+//     </div>
+//   );
+// }
+import { useState } from "react";
+import { useTransactions } from "../../contexts/TransactionContext";
+import { MdShowChart, MdExpandMore } from "react-icons/md";
+// Import from your chart folder
+import MainChart from "../Charts/MainChart"; 
+
+export default function ChartSection() {
+  const { transactions, currency } = useTransactions();
+  const [days, setDays] = useState(7); // Default to 7 days
+
+  return (
+    <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-sm">
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white">Spending Trends</h3>
+          <p className="text-sm text-slate-500">Daily transaction analysis</p>
+        </div>
+
+        {/* TOP RIGHT SELECTION */}
+        <div className="relative inline-block">
+          <select 
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            className="appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 pl-4 pr-10 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
+          >
+            <option value={7}>Last 7 Days</option>
+            <option value={30}>Last 30 Days</option>
+            <option value={90}>Last 3 Months</option>
+          </select>
+          <MdExpandMore className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+        </div>
+      </div>
+
+      <div className="h-72 w-full">
+        {transactions?.length > 0 ? (
+          <MainChart data={transactions} days={days} />
+        ) : (
+          <div className="h-full flex items-center justify-center text-slate-400 italic">
+            No data for the selected period
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { MdMic, MdMicOff } from "react-icons/md";
+
+export default function VoiceFloatingButton() {
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    // Check if browser supports Speech Recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false; // Stops after one phrase
+      recognitionRef.current.interimResults = false; // Only final results
+      recognitionRef.current.lang = "en-US"; // You can change this to 'ne-NP' for Nepali later!
+
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const confidence = event.results[0][0].confidence;
+        
+        // Save to a variable and log
+        const capturedTransaction = transcript;
+        console.log("Captured Voice Entry:", capturedTransaction);
+        console.log("Confidence Score:", (confidence * 100).toFixed(2) + "%");
+        
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error("Speech Recognition Error:", event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    } else {
+      console.error("Browser does not support Web Speech API");
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-50">
+      <motion.div
+        drag
+        dragMomentum={false}
+        className="absolute pointer-events-auto flex items-center justify-center"
+        style={{ bottom: "2rem", right: "2rem" }}
+      >
+        <button
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={toggleListening}
+          className={`
+            relative w-16 h-16 rounded-full shadow-2xl flex items-center justify-center 
+            transition-all duration-300 text-white
+            ${isListening ? "bg-red-500 scale-110" : "bg-emerald-500 hover:bg-emerald-600"}
+          `}
+        >
+          {isListening && (
+            <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-75"></span>
+          )}
+
+          {isListening ? (
+            <MdMic className="w-8 h-8 animate-pulse" />
+          ) : (
+            <MdMic className="w-8 h-8" />
+          )}
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+import { useState } from "react"; // Added
+import {
+  MdDashboard,
+  MdAddCircle,
+  MdPayments,
+  MdRequestQuote,
+  MdVolunteerActivism,
+  MdBarChart,
+  MdSettings,
+  MdMenu,      // Added
+  MdClose,     // Added
+} from "react-icons/md";
+import { Link } from "react-router-dom";
+import logo2Img from "../../assets/logo2.png";
+
+export default function Sidebar() {
+  const [isOpen, setIsOpen] = useState(false); // State for mobile toggle
+
+  const menuItems = [
+    { name: "Dashboard", icon: MdDashboard, url: "/" },
+    { name: "Add Expense", icon: MdAddCircle, url: "/add-expense" },
+    { name: "Add Income", icon: MdPayments, url: "/add-income" },
+    { name: "Borrow", icon: MdRequestQuote, url: "/borrow" },
+    { name: "Lend", icon: MdVolunteerActivism, url: "/lend" },
+    { name: "Reports", icon: MdBarChart, url: "/reports" },
+    { name: "Settings", icon: MdSettings, url: "/settings" },
+  ];
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+
+  return (
+    <>
+      {/* MOBILE HAMBURGER BUTTON (Only visible on small screens) */}
+      <button
+        onClick={toggleSidebar}
+        className="lg:hidden fixed top-4 left-4 z-[60] p-2 bg-emerald-500 text-white rounded-lg shadow-lg"
+      >
+        {isOpen ? <MdClose size={24} /> : <MdMenu size={24} />}
+      </button>
+
+      {/* OVERLAY (Closes sidebar when clicking outside on mobile) */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+
+      {/* SIDEBAR */}
+      <aside
+        className={`fixed left-0 top-0 h-screen w-52 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-md flex flex-col p-3 gap-2 z-50 transition-transform duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+      >
+        {/* Logo Section */}
+        <div className="flex flex-col items-start gap-1 px-4 py-4 mb-4">
+          <div className="relative group">
+            <img
+              src={logo2Img}
+              alt="Mero Hisab Logo"
+              className="w-32 h-auto object-contain transition-all duration-300 filter brightness-100 dark:brightness-125 dark:drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]"
+            />
+          </div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-emerald-500/80">
+            Track.Manage.Grow
+          </p>
+        </div>
+
+        {/* Menu Items */}
+        <nav className="flex flex-col gap-1 text-sm">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.name}
+                to={item.url}
+                onClick={() => setIsOpen(false)} // Close on link click (mobile)
+                className="flex items-center gap-2 px-3 py-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all"
+              >
+                <Icon className="w-4 h-4" />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+    </>
+  );
+}
+import React from "react";
+import { useTransactions } from "../../contexts/TransactionContext";
+import { 
+  MdTrendingUp, 
+  MdTrendingDown, 
+  MdRequestQuote, 
+  MdVolunteerActivism, 
+  MdAccountBalanceWallet 
+} from "react-icons/md";
+
+export default function SummaryCards() {
+  const { transactions, currency } = useTransactions();
+
+  const calculateData = () => {
+    const data = transactions || [];
+
+    // 1. Income: Regular income + Lent money that has been Settled
+    const income = data
+      .filter(t => t.type === "income" || (t.type === "lend" && t.status === "Settled"))
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    // 2. Expense: Regular expenses + Borrowed money that has been Paid
+    const expense = data
+      .filter(t => t.type === "expense" || (t.type === "borrow" && t.status === "Paid"))
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    // 3. Borrowed (Pending): Only money you still owe
+    const borrowed = data
+      .filter(t => t.type === "borrow" && t.status === "Pending")
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    // 4. Lent (Pending): Only money people still owe you
+    const lent = data
+      .filter(t => t.type === "lend" && t.status === "Pending")
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    return {
+      income,
+      expense,
+      borrowed,
+      lent,
+      balance: income - expense
+    };
+  };
+
+  const stats = calculateData();
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+      <Card 
+        title="Total Balance" 
+        value={`${currency}${stats.balance.toLocaleString()}`} 
+        icon={MdAccountBalanceWallet}
+        variant="balance" 
+      />
+      <Card 
+        title="Real Income" 
+        value={`${currency}${stats.income.toLocaleString()}`} 
+        icon={MdTrendingUp} 
+        variant="income"
+      />
+      <Card 
+        title="Real Expenses" 
+        value={`${currency}${stats.expense.toLocaleString()}`} 
+        icon={MdTrendingDown} 
+        variant="expense"
+      />
+      <Card 
+        title="To Pay (Debt)" 
+        value={`${currency}${stats.borrowed.toLocaleString()}`} 
+        icon={MdRequestQuote} 
+        variant="borrow"
+      />
+      <Card 
+        title="To Get (Lent)" 
+        value={`${currency}${stats.lent.toLocaleString()}`} 
+        icon={MdVolunteerActivism} 
+        variant="lend"
+      />
+    </div>
+  );
+}
+
+function Card({ title, value, icon: Icon, variant }) {
+  const iconColors = {
+    income: "text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20",
+    expense: "text-red-500 bg-red-50 dark:bg-red-900/20",
+    balance: "text-blue-500 bg-blue-50 dark:bg-blue-900/20",
+    borrow: "text-orange-500 bg-orange-50 dark:bg-orange-900/20",
+    lend: "text-purple-500 bg-purple-50 dark:bg-purple-900/20",
+    default: "text-slate-500 bg-slate-50 dark:bg-slate-800"
+  };
+
+  const activeColor = iconColors[variant] || iconColors.default;
+
+  return (
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl shadow-sm flex flex-col gap-3 transition-all hover:shadow-md">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+          {title}
+        </p>
+        <div className={`p-1.5 rounded-lg ${activeColor}`}>
+          {Icon && <Icon className="w-5 h-5" />}
+        </div>
+      </div>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+        {value}
+      </h2>
+    </div>
+  );
+}
+import { MdSearch, MdLightMode, MdDarkMode, MdNotifications, MdKeyboardCommandKey } from "react-icons/md";
+import { useTheme } from "../../contexts/ThemeContext";
+import { Link } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
+import { useState, useRef, useEffect } from "react";
+import { useTransactions } from "../../contexts/TransactionContext";
+
+export default function Topbar() {
+  const { theme, toggleTheme } = useTheme();
+  const { user } = useUser();
+  const { addTransaction, currency, notifications, setNotifications } = useTransactions();
+
+  // --- STATE ---
+  const [command, setCommand] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false); // FIXED: Added missing state
+  const notificationRef = useRef(null); // Ref for click-outside logic
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  // --- HANDLERS ---
+  const markAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setShowNotifications(false);
+  };
+
+  const handleQuickCommand = (input) => {
+    const parts = input.split("-");
+    if (parts.length < 3) return;
+
+    const typeCode = parts[0].toLowerCase().trim();
+    const amount = Number(parts[1].trim());
+    const detail = parts[2].trim();
+    const note = parts[3] ? parts[3].trim() : "";
+
+    if (isNaN(amount)) return;
+
+    const typeMap = { e: "expense", i: "income", l: "lend", b: "borrow" };
+    const type = typeMap[typeCode];
+    if (!type) return;
+
+    // 1. Instant UI Feedback
+    setCommand("");
+    setIsProcessing(true);
+
+    // 2. Logic
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7);
+
+    const newEntry = {
+      id: Date.now().toString(),
+      type,
+      amount,
+      date: today.toISOString().split("T")[0],
+      note: note || detail,
+      status: "Pending",
+      ...(type === "lend" || type === "borrow"
+        ? { person: detail, dueDate: nextWeek.toISOString().split("T")[0] }
+        : { category: detail }),
+    };
+
+    addTransaction(newEntry);
+
+    // 3. Short animation reset
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 150);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleQuickCommand(command);
+    }
+  };
+
+  // --- CLICK OUTSIDE TO CLOSE ---
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <header className="fixed top-0 right-0 w-[calc(100%-12rem)] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-8 py-2">
+      
+      {/* QUICK COMMAND BAR */}
+      <div className={`relative flex items-center gap-3 px-4 py-2 rounded-full w-2/3 transition-all border-2 ${
+        isProcessing ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "bg-slate-100 dark:bg-slate-800 border-transparent"
+      }`}>
+        <MdKeyboardCommandKey className={isProcessing ? "text-emerald-500" : "text-slate-400"} />
+        <input
+          type="text"
+          value={command}
+          onChange={(e) => setCommand(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="e-500-Food-Momo  OR  l-1000-Raj-Fee"
+          className="bg-transparent outline-none text-sm w-full text-slate-800 dark:text-slate-100 font-mono"
+        />
+        {!command && (
+          <span className="absolute right-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest pointer-events-none">
+            Type-Amount-Name-Note
+          </span>
+        )}
+      </div>
+
+      <div className="flex items-center gap-6">
+        {/* THEME TOGGLE */}
+        <div className="flex items-center bg-slate-200 dark:bg-slate-800 p-1 rounded-full border border-slate-300 dark:border-slate-700">
+          <button
+            onClick={() => theme !== "light" && toggleTheme()}
+            className={`w-8 h-8 flex items-center justify-center rounded-full transition cursor-pointer ${
+              theme === "light" ? "bg-white text-yellow-500 shadow-sm" : "text-slate-500"
+            }`}
+          >
+            <MdLightMode className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => theme !== "dark" && toggleTheme()}
+            className={`w-8 h-8 flex items-center justify-center rounded-full transition cursor-pointer ${
+              theme === "dark" ? "bg-slate-700 text-emerald-400 shadow-sm" : "text-slate-500"
+            }`}
+          >
+            <MdDarkMode className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* NOTIFICATIONS */}
+        <div className="relative" ref={notificationRef}>
+          <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full relative cursor-pointer"
+          >
+            <MdNotifications className="w-6 h-6 text-slate-600 dark:text-slate-300" />
+            {unreadCount > 0 && (
+              <span className="absolute top-2 right-2 w-4 h-4 bg-red-500 text-[10px] text-white flex items-center justify-center rounded-full border-2 border-white dark:border-slate-900">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          {showNotifications && (
+            <div className="absolute top-14 right-0 w-80 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl z-50 overflow-hidden">
+              <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-950">
+                <h4 className="font-bold text-slate-800 dark:text-white">Notifications</h4>
+                <button 
+                  onClick={() => setNotifications([])} 
+                  className="text-xs text-red-500 hover:underline cursor-pointer"
+                >
+                  Clear all
+                </button>
+              </div>
+
+              <div className="max-h-80 overflow-y-auto bg-white dark:bg-slate-950">
+                {notifications.length > 0 ? (
+                  notifications.map((n) => (
+                    <div key={n.id} className={`p-4 border-b border-slate-50 dark:border-slate-900 transition-colors ${!n.read ? 'bg-emerald-50/50 dark:bg-emerald-900/10' : ''}`}>
+                      <div className="flex gap-3">
+                        <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${n.type === 'warning' ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+                        <div>
+                          <p className="text-sm text-slate-700 dark:text-slate-300 leading-tight">{n.text}</p>
+                          <span className="text-[10px] text-slate-400">{n.time}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-10 text-center text-slate-400 text-sm">No new alerts</div>
+                )}
+              </div>
+              <button 
+                onClick={markAsRead} 
+                className="w-full py-3 text-xs font-bold text-slate-500 hover:text-emerald-500 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 cursor-pointer"
+              >
+                Mark all as read
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* PROFILE */}
+        <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
+          <div className="text-right">
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+              {user?.firstName || "New User"}
+            </p>
+          </div>
+          <Link to="/settings">
+            <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-slate-800 flex items-center justify-center border-2 border-emerald-500/20 hover:border-emerald-500 transition-all overflow-hidden">
+              <span className="text-emerald-600 font-bold">
+                {user?.firstName ? user.firstName[0].toUpperCase() : "?"}
+              </span>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}
+import { useState } from "react";
+import { 
+  MdShoppingBag, MdRestaurant, MdWork, MdRedeem, 
+  MdAccountBalanceWallet, MdReceipt, MdHelpOutline, MdDeleteOutline 
+} from "react-icons/md";
+import { useTransactions } from "../../contexts/TransactionContext";
+
+const getIcon = (category) => {
+  const cat = category?.toLowerCase() || "";
+  if (cat.includes("salary") || cat.includes("work")) return MdWork;
+  if (cat.includes("grocery") || cat.includes("food")) return MdRestaurant;
+  if (cat.includes("shopping")) return MdShoppingBag;
+  if (cat.includes("gift")) return MdRedeem;
+  if (cat.includes("bill")) return MdReceipt;
+  return MdHelpOutline;
+};
+
+export default function TransactionsTable() {
+  const { transactions, deleteTransaction,currency } = useTransactions();
+
+  const handleDelete = (id, note) => {
+    // Simple but effective warning popup
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${note || 'this transaction'}"?`);
+    if (confirmDelete) {
+      deleteTransaction(id);
+    }
+  };
+
+  const recentTransactions = [...transactions]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 8); // Increased to 8 to show more
+
+  return (
+    <div className="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-sm">
+      <h3 className="font-bold mb-4 text-slate-900 dark:text-slate-100">Recent Transactions</h3>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left">
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+            {recentTransactions.length > 0 ? (
+              recentTransactions.map((t) => {
+                const isIncome = t.type === "income" || t.type === "borrow";
+                return (
+                  <Row
+                    key={t.id}
+                    icon={getIcon(t.category)}
+                    title={t.note || t.category}
+                    subtitle={t.category}
+                    date={t.date}
+                    amount={`${isIncome ? "+" : "-"}${currency}${Number(t.amount).toLocaleString()}`}
+                    color={isIncome ? "text-green-600" : "text-red-500"}
+                    onDelete={() => handleDelete(t.id, t.note)} // Pass delete handler
+                  />
+                );
+              })
+            ) : (
+              <tr><td className="py-8 text-center text-slate-400">No transactions.</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function Row({ icon: Icon, title, subtitle, date, amount, color, onDelete }) {
+  return (
+    <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition group">
+      <td className="py-3 flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
+          <Icon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+        </div>
+        <div>
+          <p className="font-semibold text-slate-800 dark:text-slate-100 capitalize leading-tight">{title}</p>
+          <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">{subtitle} • {date}</p>
+        </div>
+      </td>
+
+      <td className="text-right py-3">
+        <div className="flex items-center justify-end gap-4">
+          <span className={`font-bold ${color}`}>{amount}</span>
+          
+          {/* Delete Button - Appears on Row Hover */}
+          <button 
+            onClick={onDelete}
+            className="p-1.5 rounded-md text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
+            title="Delete Transaction"
+          >
+            <MdDeleteOutline className="w-5 h-5" />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+}

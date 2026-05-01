@@ -68,9 +68,8 @@ function App() {
 
     <TransactionProvider>
       <ThemeProvider>
-     <div className='min-h-screen dark:bg-slate-950 bg-slate-50 transition-colors'>
+        <div className='dark:bg-slate-950 bg-slate-50'>
           <Sidebar />
-          
           <Topbar />
           <Routes>
             {/* NO MORE PROPS NEEDED HERE! */}
@@ -91,3 +90,16 @@ function App() {
 }
 
 export default App
+
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+import { BrowserRouter } from "react-router-dom";
+
+createRoot(document.getElementById('root')).render(
+ <BrowserRouter>
+    <App />
+  </BrowserRouter>
+)

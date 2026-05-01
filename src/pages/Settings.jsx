@@ -97,7 +97,7 @@ export default function Settings() {
   };
 
   return (
-    <main className="ml-52 pt-17 px-6 pb-6 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+<main className="lg:ml-52 pt-20 lg:pt-17 px-4 md:px-6 pb-6 h-screen overflow-y-auto lg:overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* LEFT SIDE: PROFILE & SECURITY */}
