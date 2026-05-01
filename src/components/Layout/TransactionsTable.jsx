@@ -66,25 +66,32 @@ export default function TransactionsTable() {
 function Row({ icon: Icon, title, subtitle, date, amount, color, onDelete }) {
   return (
     <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition group">
-      <td className="py-3 flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-white dark:group-hover:bg-slate-700 transition-colors">
+      <td className="py-3 px-2 flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0">
           <Icon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
         </div>
-        <div>
-          <p className="font-semibold text-slate-800 dark:text-slate-100 capitalize leading-tight">{title}</p>
-          <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">{subtitle} • {date}</p>
+        <div className="min-w-0"> {/* min-w-0 prevents text overflow issues */}
+          <p className="font-semibold text-slate-800 dark:text-slate-100 capitalize leading-tight truncate max-w-[120px] md:max-w-full">
+            {title}
+          </p>
+          <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">
+            {subtitle} • {date}
+          </p>
         </div>
       </td>
 
-      <td className="text-right py-3">
-        <div className="flex items-center justify-end gap-4">
-          <span className={`font-bold ${color}`}>{amount}</span>
+      <td className="text-right py-3 px-2">
+        <div className="flex items-center justify-end gap-2 md:gap-5">
+          {/* Amount moved left by adding gap/padding */}
+          <span className={`font-bold pr-7 text-sm md:text-base whitespace-nowrap ${color}`}>
+            {amount}
+          </span>
           
-          {/* Delete Button - Appears on Row Hover */}
-          <button 
+        {/* Permanent Delete Button */}
+<button 
             onClick={onDelete}
-            className="p-1.5 rounded-md text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
-            title="Delete Transaction"
+            className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 md:border-transparent"
+            aria-label="Delete Transaction"
           >
             <MdDeleteOutline className="w-5 h-5" />
           </button>
