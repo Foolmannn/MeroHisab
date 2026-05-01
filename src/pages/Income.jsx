@@ -52,7 +52,7 @@ export default function AddIncome() {
   };
 
   return (
-<main className="lg:ml-52 pt-20 lg:pt-17 px-4 md:px-6 pb-6 h-screen overflow-y-auto lg:overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors dark:text-slate-400">
+<main className="lg:ml-52 pt-20 lg:pt-17 px-4 md:px-6 pb-20 bg-slate-50 dark:bg-slate-950 transition-colors">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
           
@@ -158,30 +158,41 @@ export default function AddIncome() {
             </section>
           </div>
 
-          {/* SIDE CARD: RECENT INCOMES */}
-          <div className="w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden h-3/4 ">
-            <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-              <h3 className="text-lg font-bold text-slate-800 dark:text-white">
-                Recent Incomes
-              </h3>
-            </div>
+         {/* SIDE CARD: RECENT INCOMES */}
+<div className="w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-md dark:shadow-none overflow-hidden">
+  <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+    <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+      Recent Incomes
+    </h3>
+    {/* Optional: Add a count to help mobile users */}
+    <span className="text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">
+      Last 5
+    </span>
+  </div>
 
-            <div className="flex flex-col">
-              {[...transactions]
-                .filter((t) => t.type === "income")
-                .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort newest first
-                .slice(0, 5)
-                .map((t) => (
-                  <TransactionItem
-                    key={t.id}
-                    title={t.category}
-                    amount={`+ ${currency}${t.amount}`}
-                    positive
-                    date={t.date}
-                  />
-                ))}
-            </div>
-          </div>
+  {/* FIXED: Add max-h and overflow-y-auto here instead of the parent */}
+  <div className="flex flex-col max-h-[400px] overflow-y-auto scrollbar-hide">
+    {transactions.filter((t) => t.type === "income").length > 0 ? (
+      [...transactions]
+        .filter((t) => t.type === "income")
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5)
+        .map((t) => (
+          <TransactionItem
+            key={t.id}
+            title={t.category}
+            amount={`+ ${currency}${t.amount.toLocaleString()}`}
+            positive
+            date={t.date}
+          />
+        ))
+    ) : (
+      <div className="p-8 text-center text-sm text-slate-400">
+        No income records found.
+      </div>
+    )}
+  </div>
+</div>
         </div>
       </div>
     </main>

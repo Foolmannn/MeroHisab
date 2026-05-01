@@ -36,7 +36,7 @@ export const TransactionProvider = ({ children }) => {
 
   // Currency state
   const [currency, setCurrency] = useState(() => {
-    return localStorage.getItem("app_currency") || "₹";
+    return localStorage.getItem("app_currency") || "रू";
   });
 
   const updateCurrency = (symbol) => {

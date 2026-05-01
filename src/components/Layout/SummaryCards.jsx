@@ -133,21 +133,25 @@ function Card({ title, value, icon: Icon, variant }) {
     `}>
       
       {/* QUICK ACCESS LINK */}
-      <Link 
+<Link 
         to={getLinkPath()}
         className={`
-          absolute bottom-3 right-3 p-1.5 rounded-full transition-all 
-          z-10 cursor-pointer
-          /* Visible on mobile, hover effect on desktop */
-          opacity-100 lg:opacity-0 lg:group-hover:opacity-100
+          absolute bottom-3 right-3 flex items-center gap-1.5 transition-all z-10
+          /* For Balance: Show as a pill with text. For others: Show as a circle icon */
           ${isBalance 
-            ? "bg-white/20 hover:bg-white/40 text-white" 
-            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-500 hover:text-white"}
+            ? "px-3 py-1 bg-white/20 hover:bg-white/40 text-white rounded-full text-[10px] font-bold uppercase tracking-tight" 
+            : "p-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-500 hover:text-white rounded-full lg:opacity-0 lg:group-hover:opacity-100"}
         `}
       >
-        {isBalance ?<MdArrowForward size={16} /> : <MdAdd size={18} />}
+        {isBalance ? (
+          <>
+            <span>See Report</span>
+            <MdArrowForward size={14} />
+          </>
+        ) : (
+          <MdAdd size={18} />
+        )}
       </Link>
-
       <div className="flex items-center justify-between">
         <p className={`text-[10px] font-bold uppercase tracking-wider ${isBalance ? "text-blue-100" : "text-slate-500"}`}>
           {title}

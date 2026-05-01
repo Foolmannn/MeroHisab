@@ -9,12 +9,15 @@ import {
   MdDownload,
   MdLock,
   MdEmail,
-  MdExpandMore
+  MdExpandMore,
+  MdLightMode, MdDarkMode
 } from "react-icons/md";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Settings() {
   const { currency, updateCurrency, setTransactions } = useTransactions();
   const { user, updateProfile } = useUser();
+  const { theme, toggleTheme } = useTheme(); // Use the theme context
 
   // UI Toggle States
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -212,44 +215,67 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
+{/* RIGHT SIDE */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-{/* Currency selections */}
-<div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
-  <h3 className="font-bold text-xl text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-     Preferences
-  </h3>
-  
-  <div className="space-y-4">
-    <div>
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Currency</label>
-      
-      {/* Relative container for the custom dropdown icon */}
-      <div className="relative mt-1">
-        <select 
-          value={currency}
-          onChange={(e) => updateCurrency(e.target.value)}
-          className="w-full h-11 pl-4 pr-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none outline-none appearance-none cursor-pointer focus:ring-2 ring-emerald-500/20"
-        >
-                  <option value="रू">NPR - Nepalese Rupee (रू)</option>
-                <option value="Rs.">NPR - Nepalese Rupee (Rs.)</option>
-                  <option value="₹">INR - Indian Rupee (₹)</option>
-                  <option value="$">USD - US Dollar ($)</option>
-                  <option value="€">EUR - Euro (€)</option>
-                  <option value="৳">BDT - Bangladeshi Taka (৳)</option>
-                  <option value="₨">PKR - Pakistani Rupee (₨)</option>
-                  <option value="£">GBP - British Pound (£)</option>
-                  <option value="¥">JPY - Japanese Yen (¥)</option>
-        </select>
-        
-        {/* The Dropdown Arrow Icon */}
-        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-          <MdExpandMore className="text-slate-500 dark:text-slate-400 text-xl" />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-800">
+            <h3 className="font-bold text-xl text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+               Preferences
+            </h3>
+            
+            <div className="space-y-6">
+              {/* THEME TOGGLE ADDED HERE */}
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Display Mode</label>
+                <div className="mt-2 flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit border border-slate-200 dark:border-slate-700">
+                  <button
+                    onClick={() => theme !== "light" && toggleTheme()}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                      theme === "light" 
+                        ? "bg-white text-emerald-600 shadow-sm font-bold" 
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    <MdLightMode /> <span className="text-sm">Light</span>
+                  </button>
+                  <button
+                    onClick={() => theme !== "dark" && toggleTheme()}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                      theme === "dark" 
+                        ? "bg-slate-700 text-emerald-400 shadow-sm font-bold" 
+                        : "text-slate-500 hover:text-slate-400"
+                    }`}
+                  >
+                    <MdDarkMode /> <span className="text-sm">Dark</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* CURRENCY SELECTION */}
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Currency</label>
+                <div className="relative mt-2">
+                  <select 
+                    value={currency}
+                    onChange={(e) => updateCurrency(e.target.value)}
+                    className="w-full h-11 pl-4 pr-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none outline-none appearance-none cursor-pointer focus:ring-2 ring-emerald-500/20"
+                  >
+                    <option value="रू">NPR - Nepalese Rupee (रू)</option>
+                    <option value="Rs.">NPR - Nepalese Rupee (Rs.)</option>
+                    <option value="₹">INR - Indian Rupee (₹)</option>
+                    <option value="$">USD - US Dollar ($)</option>
+                    <option value="€">EUR - Euro (€)</option>
+                    <option value="৳">BDT - Bangladeshi Taka (৳)</option>
+                    <option value="₨">PKR - Pakistani Rupee (₨)</option>
+                    <option value="£">GBP - British Pound (£)</option>
+                    <option value="¥">JPY - Japanese Yen (¥)</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <MdExpandMore className="text-slate-500 dark:text-slate-400 text-xl" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* DANGER ZONE */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 border border-red-100 dark:border-red-900/30 overflow-hidden">
             <h3 className="font-bold text-red-500 mb-2 flex items-center gap-2">
