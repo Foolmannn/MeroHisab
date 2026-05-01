@@ -96,6 +96,52 @@ useEffect(() => {
   scanner();
 }, [transactions]); // Re-runs whenever any transaction is updated (including status changes)
 
+
+// For recurring expenses
+
+useEffect(() => {
+  const checkRecurringExpenses = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let newEntries = [];
+    
+    // 1. Map through transactions to find recurring templates
+    const updatedTransactions = transactions.map(t => {
+      if (!t.isRecurring) return t;
+
+      let lastDate = new Date(t.lastProcessed);
+      lastDate.setHours(0, 0, 0, 0);
+
+      // 2. While the recurring expense is behind "today", create new ones
+      while (today > lastDate) {
+        // Increment the date based on frequency (e.g., Daily)
+        lastDate.setDate(lastDate.getDate() + 1);
+
+        if (lastDate <= today) {
+          newEntries.push({
+            ...t,
+            id: `auto-${Date.now()}-${Math.random()}`,
+            date: lastDate.toISOString().split('T')[0],
+            isRecurring: false, // These are the "history" copies, not templates
+          });
+        }
+      }
+
+      // 3. Update the template's lastProcessedDate so we don't double-count tomorrow
+      return { ...t, lastProcessedDate: lastDate.toISOString().split('T')[0] };
+    });
+
+    if (newEntries.length > 0) {
+      setTransactions([...updatedTransactions, ...newEntries]);
+    }
+  };
+
+  if (transactions.length > 0) {
+    checkRecurringExpenses();
+  }
+}, []); // Runs once when the app is launched
+
   return (
     <TransactionContext.Provider
       value={{
