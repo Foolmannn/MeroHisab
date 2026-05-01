@@ -126,7 +126,7 @@ function Card({ title, value, icon: Icon, variant }) {
 
   return (
     <div className={`
-      relative group border rounded-xl p-4 shadow-sm flex flex-col gap-1 transition-all
+      relative group border rounded-xl p-3 shadow-sm flex flex-col gap-1 transition-all
       ${isBalance 
         ? "bg-blue-600 dark:bg-blue-600 border-blue-500 text-white" 
         : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800"}
@@ -136,7 +136,7 @@ function Card({ title, value, icon: Icon, variant }) {
 <Link 
         to={getLinkPath()}
         className={`
-          absolute bottom-3 right-3 flex items-center gap-1.5 transition-all z-10
+          absolute bottom-2 right-1 flex items-center gap-1.5 transition-all z-10
           /* For Balance: Show as a pill with text. For others: Show as a circle icon */
           ${isBalance 
             ? "px-3 py-1 bg-white/20 hover:bg-white/40 text-white rounded-full text-[10px] font-bold uppercase tracking-tight" 
@@ -145,8 +145,8 @@ function Card({ title, value, icon: Icon, variant }) {
       >
         {isBalance ? (
           <>
-            <span>See Report</span>
-            <MdArrowForward size={14} />
+            <span className="">See Report</span>
+            <MdArrowForward size={10} />
           </>
         ) : (
           <MdAdd size={18} />
@@ -157,11 +157,11 @@ function Card({ title, value, icon: Icon, variant }) {
           {title}
         </p>
         <div className={`p-1.5 rounded-lg ${isBalance ? "bg-white/20 text-white" : activeColor}`}>
-          {Icon && <Icon size={isBalance ? 22 : 18} />}
+          {Icon && <Icon size={isBalance ? 19 : 18} />}
         </div>
       </div>
       
-      <h2 className={`font-bold truncate pr-8 ${isBalance ? "text-2xl md:text-3xl text-white" : "text-lg md:text-2xl text-slate-900 dark:text-slate-100"}`}>
+      <h2 className={`font-bold truncate pr-8 ${isBalance ? "text-xl md:text-2xl text-white" : "text-lg md:text-2xl text-slate-900 dark:text-slate-100"}`}>
         {value}
       </h2>
     </div>
