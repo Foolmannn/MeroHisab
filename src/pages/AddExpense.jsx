@@ -8,7 +8,6 @@ import {
 } from "react-icons/md";
 
 export default function AddExpense() {
-  // 1. Grab addTransaction instead of setTransactions
   const { transactions, currency, addTransaction } = useTransactions();
 
   const [form, setForm] = useState({
@@ -43,21 +42,15 @@ export default function AddExpense() {
       date: form.expenseDate,
       note: form.expenseNote,
       person: null,
-      isRecurring: form.isRecurring, // State from your checkbox
-      frequency: "daily", // You can add a select dropdown for this
+      isRecurring: form.isRecurring, // State from checkbox
+      frequency: "daily", 
       lastProcessed: form.expenseDate,
     };
 
-    // 2. Use the central addTransaction function
-    // This handles both state update AND LocalStorage saving
+    // Using the central addTransaction function
     addTransaction(newTransaction);
 
-    // setForm({
-    //   expenseAmount: "",
-    //   expenseCategory: "",
-    //   expenseDate: new Date().toISOString().split("T")[0],
-    //   expenseNote: ""
-    // });
+
   };
 
   return (

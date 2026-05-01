@@ -17,49 +17,6 @@ import { TransactionProvider } from './contexts/TransactionContext';
 import { UserProvider } from './contexts/UserContext';
 
 
-// import './App.css'
-
-// function App() {
-
-// // const [transactions, setTransactions] = useState([]);
-// // useEffect(() => {
-// //   const saved = JSON.parse(localStorage.getItem("transactions")) || [];
-// //   setTransactions(saved);
-// // }, []);
-// // useEffect(() => {
-// //   localStorage.setItem("transactions", JSON.stringify(transactions));
-// // }, [transactions]);
-// // console.log("App transactions:", transactions)
-
-//   return (
-//     <TransactionProvider>
-
-//     <ThemeProvider>
-// <div className='dark:bg-slate-950 bg-slate-50'>
-
-// <Sidebar/>
-
-// <Topbar />
-//     <Routes>
-//    <Route path="/" element={<Dashboard transactions={transactions} />} />
-//       <Route path="/add-expense" element={<AddExpense setTransactions={setTransactions}   transactions={transactions}/>} />
-//       <Route path="/add-income" element={<AddIncome setTransactions={setTransactions}   transactions={transactions}/>} />
-//       <Route path="/borrow" element={<BorrowSection setTransactions={setTransactions}   transactions={transactions}/>} />
-//       <Route path="/lend" element={<LendSection setTransactions={setTransactions}   transactions={transactions}/>} />
-//       <Route path="/settings" element={<SettingsSection />} />
-//       <Route path="/reports" element={<ReportSection />} />
-//     </Routes>
-
-// <FloatingButton />
-// </div>
-//     </ThemeProvider>
-//     </TransactionProvider>
-
-//   )
-// }
-
-// export default App
-
 
 function App() {
   return (

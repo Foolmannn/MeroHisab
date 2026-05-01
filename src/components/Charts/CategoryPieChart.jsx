@@ -28,7 +28,6 @@ export default function CategoryPieChart({ data ,currency}) {
 
   return (
     <div className="relative w-full h-full flex flex-col items-center">
-      {/* 1. Added overflow-visible to the container so tooltips don't get cut off */}
       <div className="w-full h-[220px] overflow-visible">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -40,7 +39,6 @@ export default function CategoryPieChart({ data ,currency}) {
               outerRadius={80}
               paddingAngle={5}
               dataKey="value"
-              // 2. Added isAnimationActive={false} if you notice hover lag
               isAnimationActive={true}
             >
               {chartData.map((entry, index) => (
