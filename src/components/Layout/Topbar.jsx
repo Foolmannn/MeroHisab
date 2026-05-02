@@ -1,4 +1,4 @@
-import { MdSearch, MdLightMode, MdDarkMode, MdNotifications, MdKeyboardCommandKey } from "react-icons/md";
+import { MdSearch, MdLightMode, MdDarkMode, MdNotifications, MdKeyboardCommandKey,MdHelpOutline } from "react-icons/md";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Link } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
@@ -17,6 +17,9 @@ export default function Topbar() {
   const notificationRef = useRef(null); // Ref for click-outside logic
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const [showHelp, setShowHelp] = useState(false); // New state for Help Popup
+  const helpRef = useRef(null); // Ref for clicking outside help
 
   // --- HANDLERS ---
   const markAsRead = () => {
@@ -80,6 +83,10 @@ export default function Topbar() {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
         setShowNotifications(false);
       }
+      // Logic for help popup
+      if (helpRef.current && !helpRef.current.contains(event.target)) {
+        setShowHelp(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -93,37 +100,118 @@ export default function Topbar() {
 <header className="fixed top-0 right-0 w-full lg:w-[calc(100%-13rem)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center h-16 lg:h-17 pl-14 pr-3 lg:px-8 py-2 ">
   
   {/* QUICK COMMAND BAR */}
-  <form 
-    onSubmit={handleSubmit}
-    className={`relative flex items-center gap-3 px-4 h-11 lg:h-12 rounded-xl lg:rounded-full flex-1 lg:flex-none lg:w-2/3 transition-all border-2 ${
-      isProcessing ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "bg-slate-100 dark:bg-slate-800 border-transparent"
-    }`}
+ {/* QUICK COMMAND BAR */}
+<form 
+  onSubmit={handleSubmit}
+  className={`relative flex items-center gap-2 lg:gap-3 px-3 lg:px-4 h-11 lg:h-12 rounded-xl lg:rounded-full flex-1 lg:flex-none lg:w-2/3 transition-all border-2 ${
+    isProcessing ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "bg-slate-100 dark:bg-slate-800 border-transparent"
+  }`}
+>
+  {/* --- HELP ICON BUTTON --- */}
+  <button
+    type="button"
+    onClick={() => setShowHelp(!showHelp)}
+    className="shrink-0 p-1 text-slate-400 hover:text-emerald-500 transition-colors"
   >
-    <MdKeyboardCommandKey className={`${isProcessing ? "text-emerald-500" : "text-slate-400"} text-xl shrink-0`} />
-    
-    <input
-      type="text"
-      value={command}
-      onChange={(e) => setCommand(e.target.value)}
-      inputMode="text" 
-      /* 
-         Placeholder logic: 
-         - Short on mobile to avoid overlap
-         - Full version on desktop
-      */
-      placeholder={window.innerWidth < 768 ? "e-500-Food..." : "e-500-Food-Note"}
-      className="bg-transparent outline-none text-base lg:text-sm w-full text-slate-800 dark:text-slate-100 font-mono placeholder:text-slate-400"
-    />
+    <MdHelpOutline className="text-xl" />
+  </button>
+  
+  <MdKeyboardCommandKey className={`${isProcessing ? "text-emerald-500" : "text-slate-400"} text-xl shrink-0`} />
 
-    {/* HELPER TEXT: Same as before, only visible on larger devices (lg and up) */}
-    {!command && (
-      <span className="hidden lg:block absolute right-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest pointer-events-none">
-        Type-Amount-Name-Note
-      </span>
-    )}
+ {/* --- HELP POPUP --- */}
+{showHelp && (
+  <div 
+    ref={helpRef}
+    className="
+      /* Mobile: Center screen, full width, positioned below header */
+      fixed top-[70px] left-1/2 -translate-x-1/2 w-[92vw] 
+      /* Desktop: Reset to absolute, anchored to the bar */
+      lg:absolute lg:top-14 lg:left-0 lg:translate-x-0 lg:w-[450px] 
+      
+      bg-white dark:bg-slate-900 
+      border border-slate-200 dark:border-slate-800 
+      shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]
+      rounded-2xl z-[100] p-5 
+      animate-in fade-in zoom-in slide-in-from-top-2 duration-200"
+  >
+    <div className="flex justify-between items-center mb-4">
+      <h4 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+        <div className="p-1.5 bg-emerald-500/10 rounded-lg">
+          <MdKeyboardCommandKey className="text-emerald-500 text-lg" />
+        </div>
+        Quick Command Guide
+      </h4>
+      <button 
+        onClick={() => setShowHelp(false)} 
+        className="lg:hidden p-2 -mr-2 text-slate-400 active:text-red-500 font-bold"
+      >
+        ✕
+      </button>
+    </div>
 
-    <button type="submit" className="hidden" />
-  </form>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Standard Formats</p>
+        <div className="grid gap-2">
+          <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-1">Expense & Income</p>
+            <code className="text-sm text-emerald-600 dark:text-emerald-400 font-mono font-bold break-all">
+              type-amount-category-note
+            </code>
+          </div>
+          <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-1">Borrow & Lend</p>
+            <code className="text-sm text-blue-600 dark:text-blue-400 font-mono font-bold break-all">
+              type-amount-name-note
+            </code>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { key: 'e', label: 'Expense', color: 'bg-emerald-500', ex: 'e-50-food-momo' },
+          { key: 'i', label: 'Income', color: 'bg-blue-500', ex: 'i-10000-salary-april month' },
+          { key: 'l', label: 'Lend', color: 'bg-orange-500', ex: 'l-100-Ram-for snack' },
+          { key: 'b', label: 'Borrow', color: 'bg-purple-500', ex: 'b-50-Samir-for lunch' },
+        ].map((item) => (
+          <div key={item.key} className="flex flex-col p-2 rounded-lg bg-slate-50 dark:bg-slate-800/30 border border-transparent dark:border-slate-800">
+            <div className="flex items-center gap-2 mb-1">
+              <span className={`w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold text-white ${item.color}`}>
+                {item.key}
+              </span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">{item.label}</span>
+            </div>
+            <span className="text-[10px] text-slate-400 font-mono">{item.ex}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/10">
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 italic leading-relaxed">
+          <strong className="text-emerald-500">Pro Tip:</strong> You can skip the "note". Just type <code className="bg-white dark:bg-slate-800 px-1 rounded">e-500-Food</code> and hit enter!
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+  <input
+    type="text"
+    value={command}
+    onChange={(e) => setCommand(e.target.value)}
+    placeholder={window.innerWidth < 768 ? "e-500-Food-Momo" : "Quick entry: e-500-Food-Momo"}
+    className="bg-transparent outline-none text-base lg:text-sm w-full text-slate-800 dark:text-slate-100 font-mono placeholder:text-slate-400 min-w-[50px]"
+  />
+
+  {/* HELPER TEXT (Desktop only) */}
+  {!command && (
+    <span className="hidden xl:block absolute right-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest pointer-events-none">
+      Type-Amount-Name-Note
+    </span>
+  )}
+
+  <button type="submit" className="hidden" />
+</form>
 
    <div className="flex items-center gap-2 lg:gap-6 ml-2">
         {/* THEME TOGGLE */}
