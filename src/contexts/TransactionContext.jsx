@@ -128,8 +128,8 @@ useEffect(() => {
         }
       }
 
-      // 3. Update the template's lastProcessedDate so we don't double-count tomorrow
-      return { ...t, lastProcessedDate: lastDate.toISOString().split('T')[0] };
+      // 3. Update the template's lastProcessed so we don't double-count tomorrow
+      return { ...t, lastProcessed: lastDate.toISOString().split('T')[0] };
     });
 
     if (newEntries.length > 0) {
