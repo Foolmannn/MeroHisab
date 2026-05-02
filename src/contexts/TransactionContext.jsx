@@ -5,11 +5,15 @@ const TransactionContext = createContext();
 export const TransactionProvider = ({ children }) => {
   const [transactions, setTransactions] = useState([]);
 
-  // Load from localstorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("transactions");
-    if (saved) setTransactions(JSON.parse(saved));
-  }, []);
+// 1. Load from localstorage on mount
+useEffect(() => {
+  const saved = localStorage.getItem("transactions");
+  if (saved) {
+    const parsedTransactions = JSON.parse(saved);
+    // CHECK RECURRING ONCE immediately after loading data
+    checkRecurringExpenses(parsedTransactions);
+  }
+}, []);
 
   // ADD FUNCTION
   const addTransaction = (newTransaction) => {
@@ -99,48 +103,58 @@ useEffect(() => {
 
 // For recurring expenses
 
-useEffect(() => {
-  const checkRecurringExpenses = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+// 2. Logic to process recurring expenses
+const checkRecurringExpenses = (initialTransactions) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    let newEntries = [];
-    
-    // 1. Map through transactions to find recurring templates
-    const updatedTransactions = transactions.map(t => {
-      if (!t.isRecurring) return t;
+  let newEntries = [];
+  let hasChanged = false;
 
-      let lastDate = new Date(t.lastProcessed);
-      lastDate.setHours(0, 0, 0, 0);
+  const updatedTransactions = initialTransactions.map(t => {
+    if (!t.isRecurring || !t.lastProcessed) return t;
 
-      // 2. While the recurring expense is behind "today", create new ones
-      while (today > lastDate) {
-        // Increment the date based on frequency (e.g., Daily)
-        lastDate.setDate(lastDate.getDate() + 1);
+    let lastDate = new Date(t.lastProcessed);
+    lastDate.setHours(0, 0, 0, 0);
 
-        if (lastDate <= today) {
-          newEntries.push({
-            ...t,
-            id: `auto-${Date.now()}-${Math.random()}`,
-            date: lastDate.toISOString().split('T')[0],
-            isRecurring: false, // These are the "history" copies, not templates
-          });
-        }
+    let tempLastProcessed = new Date(lastDate);
+    let tempNewEntries = [];
+
+    // While the next occurrence is today or earlier
+    while (true) {
+      let nextDate = new Date(tempLastProcessed);
+      nextDate.setDate(nextDate.getDate() + 1); // Assuming Daily frequency
+
+      if (nextDate <= today) {
+        hasChanged = true;
+        tempNewEntries.push({
+          ...t,
+          id: `auto-${Date.now()}-${Math.random()}`,
+          date: nextDate.toISOString().split('T')[0],
+          isRecurring: false,
+          lastProcessed: null // History entries don't need this
+        });
+        tempLastProcessed = nextDate;
+      } else {
+        break;
       }
-
-      // 3. Update the template's lastProcessed so we don't double-count tomorrow
-      return { ...t, lastProcessed: lastDate.toISOString().split('T')[0] };
-    });
-
-    if (newEntries.length > 0) {
-      setTransactions([...updatedTransactions, ...newEntries]);
     }
-  };
 
-  if (transactions.length > 0) {
-    checkRecurringExpenses();
+    if (tempNewEntries.length > 0) {
+      newEntries.push(...tempNewEntries);
+      return { ...t, lastProcessed: tempLastProcessed.toISOString().split('T')[0] };
+    }
+    return t;
+  });
+
+  if (hasChanged) {
+    const finalData = [...updatedTransactions, ...newEntries];
+    setTransactions(finalData);
+    localStorage.setItem("transactions", JSON.stringify(finalData));
+  } else {
+    setTransactions(initialTransactions);
   }
-}, [transactions.length]); // Runs once when the app is launched
+};
 
   return (
     <TransactionContext.Provider
