@@ -1,6 +1,6 @@
 import { useState ,useEffect} from 'react'
 import logo from './assets/logo.png'
-import Dashboard from './Pages/Dashboard'
+import Dashboard from './pages/Dashboard'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { Routes, Route } from "react-router-dom";
 import Sidebar from './components/Layout/Sidebar'
