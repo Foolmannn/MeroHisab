@@ -15,15 +15,23 @@ import SettingsSection from './pages/Settings';
 import AddExpense from './pages/AddExpense';
 import { TransactionProvider } from './contexts/TransactionContext';
 import { UserProvider } from './contexts/UserContext';
+import { useUser } from './contexts/UserContext';
+import Onboarding from './components/Layout/Onboarding';
 
 
 
 function App() {
+  const { user } = useUser();
+
+  // If no user data in localStorage, force the onboarding
+  if (!user) {
+    return <Onboarding />;
+  }
+
+  // If user exists, show the actual app
   return (
-    <UserProvider>
 
 
-    <TransactionProvider>
       <ThemeProvider>
      <div className='min-h-screen dark:bg-slate-950 bg-slate-50 transition-colors'>
           <Sidebar />
@@ -42,8 +50,7 @@ function App() {
           {/* <FloatingButton /> */}
         </div>
       </ThemeProvider>
-    </TransactionProvider>
-    </UserProvider>
+
   );
 }
 
