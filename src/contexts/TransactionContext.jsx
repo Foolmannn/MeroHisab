@@ -140,7 +140,7 @@ useEffect(() => {
   if (transactions.length > 0) {
     checkRecurringExpenses();
   }
-}, []); // Runs once when the app is launched
+}, [transactions.length]); // Runs once when the app is launched
 
   return (
     <TransactionContext.Provider
