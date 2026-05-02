@@ -39,7 +39,7 @@ function App() {
             <Route path="/settings" element={<SettingsSection />} />
             <Route path="/reports" element={<ReportSection />} />
           </Routes>
-          <FloatingButton />
+          {/* <FloatingButton /> */}
         </div>
       </ThemeProvider>
     </TransactionProvider>

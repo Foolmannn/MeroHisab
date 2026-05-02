@@ -71,16 +71,16 @@ return (
 
       {/* The rest of the cards stay as col-span-1 by default */}
       <Card 
-        title="Real Income" 
-        value={`${currency}${stats.income.toLocaleString()}`} 
-        icon={MdTrendingUp} 
-        variant="income"
-      />
-      <Card 
         title="Real Expenses" 
         value={`${currency}${stats.expense.toLocaleString()}`} 
         icon={MdTrendingDown} 
         variant="expense"
+      />
+      <Card 
+        title="Real Income" 
+        value={`${currency}${stats.income.toLocaleString()}`} 
+        icon={MdTrendingUp} 
+        variant="income"
       />
       <Card 
         title="To Pay (Debt)" 

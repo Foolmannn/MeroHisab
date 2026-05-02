@@ -79,7 +79,7 @@ export default function AddIncome() {
                       onChange={handleChange}
                       placeholder="0.00"
                       className="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-slate-800 text-xl font-semibold
-                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-300 "
                     />
                   </div>
                 </div>
@@ -95,7 +95,7 @@ export default function AddIncome() {
                       value={form.category}
                       onChange={handleChange}
                       className="w-full h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800
-                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-300 "
                     >
                       <option>Salary</option>
                       <option>Freelance</option>
@@ -116,7 +116,7 @@ export default function AddIncome() {
                       value={form.date}
                       onChange={handleChange}
                       className="w-full h-12 px-4 rounded-lg bg-slate-100 dark:bg-slate-800
-                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition"
+                      border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-300 "
                     />
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export default function AddIncome() {
                     rows="3"
                     placeholder="Describe where this income came from..."
                     className="w-full p-4 rounded-lg bg-slate-100 dark:bg-slate-800
-                    border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-400"
+                    border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition dark:text-slate-300"
                   />
                 </div>
 
