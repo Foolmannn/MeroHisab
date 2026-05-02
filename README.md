@@ -1,1 +1,31 @@
-MeroHisab is the mainly an expense tracker app with the additional feature of the tracking the earnings.It allows user to categorize the spendings and also has the feature of tracking the borrow and lendings. User can add the auto spendings for the regular predictable expenses like bus fares, montly emi etc for the desired amount of the period. Easy to visualize charts are added along with the monthly report at the end of month. This report can be exported as the csv or pdf file.
+
+#  MeroHisab 
+
+MeroHisab is a lightweight, privacy-focused personal finance tracker designed to help users manage their daily expenses and income with ease. Built with **React** and **Tailwind CSS**, it focuses on "Financial Responsibility and Awareness."
+
+Visit: https://mero-hisab-one.vercel.app/
+
+---
+
+## Features
+
+*   **Expense & Income Tracking:** Quickly log your daily financial activities with categories and notes.
+*   **Debt Notifications:** Stay on top of what you owe with built-in "Settle-Debt" notification logic.
+*   **Data Privacy:** All your financial data is stored locally in your browser using **LocalStorage**. No data ever leaves your device.
+*   **Responsive Design:** Fully optimized for mobile and desktop viewing using modern CSS techniques.
+*   **Visual Reports:** Interactive visualizations of your spending habits.
+*   **Recurring Expenses:** Automate your fixed costs. Set up repeating transactions (subscriptions, rent, etc.) that log themselves based on your schedule.
+*   **Data Portability (Export CSV):** Export your financial records into a professional `.csv` format compatible with Excel and Google Sheets.
+
+---
+
+##  Tech Stack
+
+*   **Frontend:** [React.js](https://reactjs.org/)
+*   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+*   **Build Tool:** [Vite](https://vitejs.dev/)
+*   **State Management:** React Hooks 
+*   **Storage:** Browser LocalStorage API
+
+---
+
