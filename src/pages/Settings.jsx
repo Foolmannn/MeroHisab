@@ -304,7 +304,6 @@ export default function Settings() {
                     onChange={(e) => updateCurrency(e.target.value)}
                     className="w-full h-11 pl-4 pr-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none outline-none appearance-none cursor-pointer focus:ring-2 ring-emerald-500/20"
                   >
-                    <option value="रू">NPR - Nepalese Rupee (रू)</option>
                     <option value="Rs.">NPR - Nepalese Rupee (Rs.)</option>
                     <option value="₹">INR - Indian Rupee (₹)</option>
                     <option value="$">USD - US Dollar ($)</option>
