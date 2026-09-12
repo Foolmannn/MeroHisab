@@ -223,7 +223,7 @@ export default function AddExpense() {
                   <TransactionItem
                     key={t.id}
                     title={t.category}
-                    amount={`- $${t.amount}`}
+                    amount={`- ${currency} ${t.amount}`}
                     date={t.date}
                   />
                 ))}
