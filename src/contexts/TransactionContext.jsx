@@ -40,7 +40,7 @@ useEffect(() => {
 
   // Currency state
   const [currency, setCurrency] = useState(() => {
-    return localStorage.getItem("app_currency") || "Rs.";
+    return localStorage.getItem("app_currency") || "रू";
   });
 
   const updateCurrency = (symbol) => {
